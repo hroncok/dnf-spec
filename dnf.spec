@@ -3,7 +3,7 @@
 
 Name:		dnf
 Version:	0.2.7
-Release:	2.git%{gitrev}%{?dist}
+Release:	3.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -39,6 +39,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.2.7-3.gitb74addd
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Mon Jul 16 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-2.gitb74addd
 - Add missing rpmUtils.error.
 
