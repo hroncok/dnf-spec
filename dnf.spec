@@ -1,9 +1,9 @@
-%global gitrev 72fd0b8
+%global gitrev 632e1eb
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.7
-Release:	4.git%{gitrev}%{?dist}
+Release:	5.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -39,7 +39,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
-* Tue Jul 24 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-4.git72fd0b8
+* Tue Jul 24 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-5.git632e1eb
 - Clean dependencies during 'dnf erase'.
 - fixed: readline problems under pdb.
 - 'dnf info' now works.
