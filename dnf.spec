@@ -1,8 +1,8 @@
-%global gitrev 5dea6e7
+%global gitrev b06d183
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.8
+Version:	0.2.10
 Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -39,6 +39,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Thu Aug 30 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.10-1.gitb06d183
+- Latest hawkey compatibilities.
+- RhBug: 852803
+
 * Thu Aug 23 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.9-1.git5dea6e7
 - Latest hawkey compatibilities.
 - RhBug: 847098
