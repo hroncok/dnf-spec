@@ -1,8 +1,9 @@
-%global gitrev 9da1268
+%global gitrev 832ecd1
+%global hawkey_version 0.2.11-3
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.11
+Version:	0.2.12
 Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -14,7 +15,8 @@ BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
 BuildRequires:  python-sphinx
-Requires:	python-hawkey >= 0.2.10-1
+BuildRequires:	python-hawkey >= %{hawkey_version}
+Requires:	python-hawkey >= %{hawkey_version}
 Requires:	crontabs
 
 %description
@@ -32,6 +34,9 @@ make doc-man
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
+%check
+make ARGS="-V" test
+
 %files
 %doc AUTHORS README.md COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
@@ -39,9 +44,14 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
-%{_mandir}/man1/dnf.1.gz
+%{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Fri Sep 21 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.12-1.git832ecd1
+- fix 'dnf --version'. (RhBug: 857710)
+- Latest hawkey compatibilities.
+- Run 'make check' when building the RPM.
+
 * Thu Sep 13 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.11-1.git9da1268
 - Make 'dnf help' work. (RhBug: 853923)
 - Add the man page. (RhBug: 853923)
