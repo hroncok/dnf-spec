@@ -14,7 +14,7 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
-BuildRequires:  python-nose python-sphinx
+BuildRequires:  python-nose python-sphinx rpm-python
 BuildRequires:	python-hawkey >= %{hawkey_version}
 Requires:	python-hawkey >= %{hawkey_version}
 Requires:	crontabs
