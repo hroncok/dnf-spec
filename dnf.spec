@@ -4,7 +4,7 @@
 
 Name:		dnf
 Version:	0.2.12
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -14,7 +14,10 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
-BuildRequires:  python-nose python-sphinx rpm-python
+BuildRequires:  python-nose
+BuildRequires:  python-sphinx
+BuildRequires:  rpm-python
+BuildRequires:  urlgrabber
 BuildRequires:	python-hawkey >= %{hawkey_version}
 Requires:	python-hawkey >= %{hawkey_version}
 Requires:	crontabs
