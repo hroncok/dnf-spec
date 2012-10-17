@@ -1,9 +1,9 @@
-%global gitrev da60a96
-%global hawkey_version 0.2.12-2
+%global gitrev ea72d9a
+%global hawkey_version 0.3.0
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.13
+Version:	0.2.14
 Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -21,6 +21,7 @@ BuildRequires:  urlgrabber
 BuildRequires:	python-hawkey >= %{hawkey_version}
 Requires:	python-hawkey >= %{hawkey_version}
 Requires:	crontabs
+Requires:	libreport-filesystem
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
@@ -47,9 +48,19 @@ make ARGS="-V" test
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
+%{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Wed Oct 17 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.13-1.gitea72d9a
+- works against hawkey-0.3.0
+- search: sort so same matched keywords stay next to each other.
+- Add custom ABRT collector.
+- fix: _preload_file() does the right thing when destfn does not exist.
+- Make the logfiles readable by everyone.
+- yumRepo: log when we are leaving MD files behind and don't know why.
+- Support globs in the install command when multilib_policy is 'best'. (RhBug: 864710)
+
 * Fri Oct 5 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.13-1.gitda60a96
 - fix: traceback in YumBase.verifyTransaction() for local .rpms.
 - Enable the 'clean' command. (RhBug: 853940)
