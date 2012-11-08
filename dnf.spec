@@ -3,7 +3,7 @@
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.14
+Version:	0.2.15
 Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
