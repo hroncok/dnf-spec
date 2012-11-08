@@ -52,7 +52,7 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
-* Wed Nov 8 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.15-1.git5d85f6b
+* Wed Nov 8 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.15-3.git5d85f6b
 - support full NEVRA specification for the erase and install commands. (RhBug: 867553)
 - Enable check-update command. (RhBug: 868810)
 - Support listing patterned obsoletes.
