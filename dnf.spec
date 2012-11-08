@@ -1,5 +1,5 @@
 %global gitrev 5d85f6b
-%global hawkey_version 0.3.1-2.git6f9df85
+%global hawkey_version 0.3.1
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
