@@ -52,7 +52,7 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
-* Thu Jan 3 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.19-1.gitb901926
+* Thu Jan 3 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.19-1.gitb901926
 - options parsing: do not access repositories before cache_c is ready. (RhBug:889706)
 - move to the latest hawkey using libsolv-0.2.3
 
