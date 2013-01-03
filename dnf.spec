@@ -1,9 +1,9 @@
-%global gitrev 3701ad6
-%global hawkey_version 0.3.4
+%global gitrev b901926
+%global hawkey_version 0.3.5
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.18
+Version:	0.2.19
 Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -52,6 +52,10 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Thu Jan 3 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.19-1.gitb901926
+- options parsing: do not access repositories before cache_c is ready. (RhBug:889706)
+- move to the latest hawkey using libsolv-0.2.3
+
 * Mon Dec 17 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.18-1.git3701ad6
 - Allow specifying removal with 'name.arch' and others (RhBug:877449)
 - install: use Subject class to allow installation by provides (RhBug:880303)
