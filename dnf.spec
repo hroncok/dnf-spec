@@ -1,10 +1,10 @@
-%global gitrev dec970f
-%global hawkey_version 0.3.6
+%global gitrev e7d9c11
+%global hawkey_version 0.3.6-2
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.20
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -52,6 +52,18 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Wed Jan 30 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.20-2.gite7d9c11
+- cosmetic: trailing whitespace in dnf.yum.callbacks (Ales Kozumplik)
+- rename 'YumBase' to 'Base'. (Ales Kozumplik)
+- remove base.yumvar property. (Ales Kozumplik)
+- Get rid of preconf. (Ales Kozumplik)
+- BaseConfig.overrides() (Ales Kozumplik)
+- YumOptionParser._non_nones2dict() (Ales Kozumplik)
+- cosmetic: trailing whitespace in dnf.yum.parser (Ales Kozumplik)
+- Make the Base object accessible from the toplevel 'dnf' module. (Ales Kozumplik)
+- Config option for the default userinput answer. (Ales Kozumplik)
+- tests: reflect changes to querying updates in hawkey commit 961ca40. (Ales Kozumplik)
+
 * Fri Jan 18 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.20-1.gitdec970f
 - fix '--exclude' command-line option (related RhBug:871892)
 - Introduce --best switch to force trying latest packages in transactions ( RhBug:882211)
