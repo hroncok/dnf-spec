@@ -1,5 +1,5 @@
 %global gitrev e7d9c11
-%global hawkey_version 0.3.6-2
+%global hawkey_version 0.3.6-2.gita53a6b1
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
