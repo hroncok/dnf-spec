@@ -163,7 +163,7 @@ make ARGS="-V" test
 * Mon Jul 9 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-10.git964faae
 - Licensing changes.
 
-* Tue Jun 21 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-9.gitb4aa5c1
+* Thu Jun 21 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-9.gitb4aa5c1
 - More spec fixes.
 
 * Tue Jun 19 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-8.gitb4aa5c1
