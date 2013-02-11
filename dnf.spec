@@ -1,10 +1,10 @@
-%global gitrev e7d9c11
-%global hawkey_version 0.3.6-2.gita53a6b1.fc19
+%global gitrev 050524e
+%global hawkey_version 0.3.7
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.20
-Release:	3.git%{gitrev}%{?dist}
+Version:	0.2.21
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -23,14 +23,11 @@ Requires:	python-hawkey = %{hawkey_version}
 Requires:	crontabs
 Requires:	libreport-filesystem
 
-Patch1:		0001-disable-TestConfigure.patch
-
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %prep
 %setup -q -n dnf
-%patch1 -p1 -b .disableTestConfigure
 
 %build
 %cmake .
@@ -55,8 +52,14 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
-* Mon Feb 4 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.20-3.gite7d9c11
-- disable unit test blocking the build (a proper fix is upstream).
+* Mon Feb 11 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.21-1.git050524e
+- Selector.get_best_selector() should be able to handle simple version (not just EVR). (Ales Kozumplik)
+- remove YumUtilBase(). (Ales Kozumplik)
+- Do not check for unfinished transactions in Base.buildTransaction() (RhBug:902810) (Ales Kozumplik)
+- list command accepts NEVRA combinations as arguments. (RhBug:901833) (Ales Kozumplik)
+- tests: fix Cli.configure() test to pass without the main system conffile present. (Ales Kozumplik)
+- tests: test toplevel from test_sanity. (Ales Kozumplik)
+- case-insensitive matching in Subject. (Ales Kozumplik)
 
 * Wed Jan 30 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.20-2.gite7d9c11
 - cosmetic: trailing whitespace in dnf.yum.callbacks (Ales Kozumplik)
