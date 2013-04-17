@@ -1,4 +1,4 @@
-%global gitrev 8b435e9
+%global gitrev 91ba5e0
 %global hawkey_version 0.3.10
 %global librepo_version 0.0.2-3.20130408git720d68d%{dist}
 
@@ -6,7 +6,7 @@
 
 Name:		dnf
 Version:	0.3.3
-Release:	1.git%{gitrev}%{?dist}
+Release:	3.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -65,6 +65,8 @@ make ARGS="-V" test
 
 %post
 %systemd_post dnf-makecache.timer
+systemctl enable dnf-makecache.timer
+systemctl start dnf-makecache.timer
 
 %preun
 %systemd_preun dnf-makecacache.timer
@@ -73,7 +75,7 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
-* Wed Apr 17 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.3-1.git8b435e9
+* Wed Apr 17 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.3-3.git91ba5e0
 - packaging: do not run 'systemctl' to enable the timer service manually. (Ales Kozumplik)
 - cosmetic: trailing whitespace in dnf/cli/callback.py (Ales Kozumplik)
 - UI: call updates upgrades. (RhBug:903775) (Ales Kozumplik)
