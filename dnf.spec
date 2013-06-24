@@ -1,4 +1,4 @@
-%global gitrev da9f862
+%global gitrev 85524ae
 %global hawkey_version 0.3.14
 %global librepo_version 0.0.4
 
@@ -6,7 +6,7 @@
 
 Name:		dnf
 Version:	0.3.8
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -74,7 +74,7 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
-* Mon Jun 24 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.8-1.gitda9f862
+* Mon Jun 24 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.8-1.git85524ae
 - fix: tracebacks when installing to an empty installroot (RhBug:975858) (Ales Kozumplik)
 - doc: 'dnf erase kernel' erases all the kernels. (Ales Kozumplik)
 - i18n: even if we have a legit encoding, don't assume it covers the entire UCD (RhBug:976652) (Ales Kozumplik)
