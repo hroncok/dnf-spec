@@ -6,7 +6,7 @@
 
 Name:		dnf
 Version:	0.3.10
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -74,6 +74,9 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.10-2.giteb9dddb
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 
 * Mon Jul 22 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.10-1giteb9dddb
 - repos: skip_if_unavailable is True by default now. (RhBug:984483) (Ales Kozumplik)
