@@ -54,7 +54,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 make ARGS="-V" test
 
 %files
-%doc AUTHORS README.md COPYING PACKAGE-LICENSING
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %{python_sitelib}/dnf/
 %dir %{confdir}
