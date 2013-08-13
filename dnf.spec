@@ -1,12 +1,12 @@
-%global gitrev eb9dddb
+%global gitrev 7d717c7
 %global hawkey_version 0.3.16
 %global librepo_version 0.0.5
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.3.10
-Release:	2.git%{gitrev}%{?dist}
+Version:	0.3.11
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -61,6 +61,7 @@ make ARGS="-V" test
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
+%{_mandir}/man8/dnf.conf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 
@@ -74,11 +75,21 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
-* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.10-2.giteb9dddb
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
+* Tue Aug 13 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.11-1.git7d717c7
+- fix: UnicodeDecodeError during group install (RhBug:996138) (Ales Kozumplik)
+- doc: update the README, move it to .rst (Ales Kozumplik)
+- doc: dnf.conf.8 missing from the RPM. (Ales Kozumplik)
+- remove: TODO file (Ales Kozumplik)
+- output: in list_transaction() list the active transaction members. (RhBug:977753) (Ales Kozumplik)
+- rename: Output.listTransaction() -> list_transaction(). (Ales Kozumplik)
+- doc: 'best' config option. (Ales Kozumplik)
+- repo: do not let librepo resolve mirrorlists on each package download. (RhBug:979042) (Ales Kozumplik)
+- remove: mdpolicy and mddownloadpolicy from config. (Ales Kozumplik)
+- The DNF default multilib policy is 'best'. (Ales Kozumplik)
+- fix: typo in subj.get_best_query() call. (Ales Kozumplik)
 
-* Mon Jul 22 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.10-1giteb9dddb
+* Mon Jul 22 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.10-1.giteb9dddb
 - repos: skip_if_unavailable is True by default now. (RhBug:984483) (Ales Kozumplik)
 - doc: omitted from 6f70d2b, also mention the related bugzillas. (Ales Kozumplik)
 - doc: why 'dnf provides /bin/python' fails on Fedora. (Ales Kozumplik)
