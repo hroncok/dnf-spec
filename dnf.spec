@@ -1,12 +1,12 @@
-%global gitrev 55e6369
-%global hawkey_version 0.4.1
-%global librepo_version 1.1.0
+%global gitrev 4b96ea8
+%global hawkey_version 0.4.2
+%global librepo_version 1.2.0
 %global libcomps_version 0.1.3
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.1
+Version:	0.4.2
 Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -26,14 +26,12 @@ BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  systemd
-BuildRequires:  urlgrabber
 Requires:	libreport-filesystem
 Requires:	python-hawkey = %{hawkey_version}
 Requires:	python-iniparse
 Requires:	python-libcomps = %{libcomps_version}
 Requires:	python-librepo = %{librepo_version}
 Requires:	rpm-python
-Requires:	urlgrabber
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
@@ -78,6 +76,36 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Tue Oct 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.2-1.git4b96ea8
+- always enable LRO_FASTESTMIRROR (Zdenek Pavlas)
+- progress: add "err" argument to end() callback, merge with failure() (Zdenek Pavlas)
+- progress: reformat and reword docstrings (Zdenek Pavlas)
+- config: extract prepend_installroot() to a public method. (Ales Kozumplik)
+- refactor: Rename exceptions raised by Base.reinstall. (Radek Holy)
+- Fix error handling in YumBaseCli.reinstallPkgs. (Radek Holy)
+- Fix error handling in Base.reinstall. (Radek Holy)
+- refactor: Adapt Base.reinstall to require the same parameters as similar methods. (Radek Holy)
+- refactor: Adapt Base.update to require same parameters as similar methods. (Radek Holy)
+- add "size" arg to cb.end and cb.failure callbacks (Zdenek Pavlas)
+- progress display: handle 100% case better (Zdenek Pavlas)
+- progress display: sanitize negative size deltas (Zdenek Pavlas)
+- support librepo.PackageTarget(endcb=...) (Zdenek Pavlas)
+- remove: Requires urlgrabber (Zdenek Pavlas)
+- remove: base.verifyPkg(), base.verifyChecksum() (Zdenek Pavlas)
+- remove: urlgrabber.grabber.default_grabber.opts.user_agent (Zdenek Pavlas)
+- remove: set_failure_callback() (Zdenek Pavlas)
+- update AUTHORS (Ales Kozumplik)
+- added assignment of cost option to hawkey repo object (Jan Silhan)
+- created new private method _get_installed from code in assertResult (Jan Silhan)
+- use librepo.download_packages() (Zdenek Pavlas)
+- make repo._local_origin public, as repo.local (Zdenek Pavlas)
+- unit tests: dnf.cli.progress (Zdenek Pavlas)
+- add dnf.cli.progress (Zdenek Pavlas)
+- drop per-repo interrupt callback (Zdenek Pavlas)
+- unit tests: dnf.cli.format (Zdenek Pavlas)
+- move format_number, format_time to dnf.cli.format (Zdenek Pavlas)
+- Fix downgrade inaction if package version provided. (Radek Holy)
 
 * Mon Sep 16 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.1-1.git55e6369
 - logging: do not show 'Downloading packages:' on remove. (RhBug:1008444) (Ales Kozumplik)
