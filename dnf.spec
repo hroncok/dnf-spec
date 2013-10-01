@@ -1,4 +1,4 @@
-%global gitrev 4b96ea8
+%global gitrev c1716d7
 %global hawkey_version 0.4.2
 %global librepo_version 1.2.0
 %global libcomps_version 0.1.3
@@ -77,7 +77,7 @@ make ARGS="-V" test
 
 %changelog
 
-* Tue Oct 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.2-1.git4b96ea8
+* Tue Oct 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.2-1.gitc1716d7
 - always enable LRO_FASTESTMIRROR (Zdenek Pavlas)
 - progress: add "err" argument to end() callback, merge with failure() (Zdenek Pavlas)
 - progress: reformat and reword docstrings (Zdenek Pavlas)
