@@ -6,8 +6,8 @@
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.2
-Release:	2.git%{gitrev}%{?dist}
+Version:	0.4.3
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -51,8 +51,8 @@ make doc-man
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-# %check
-# make ARGS="-V" test
+%check
+make ARGS="-V" test
 
 %files
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -76,9 +76,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
-
-* Wed Oct 2 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.2-2.gitc1716d7
-- packaging: require GTE versions of dependencies. (Ales Kozumplik)
 
 * Tue Oct 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.2-1.gitc1716d7
 - always enable LRO_FASTESTMIRROR (Zdenek Pavlas)
