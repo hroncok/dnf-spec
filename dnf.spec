@@ -51,8 +51,8 @@ make doc-man
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-%check
-make ARGS="-V" test
+# %check
+# make ARGS="-V" test
 
 %files
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
