@@ -1,4 +1,4 @@
-%global gitrev 83504fe
+%global gitrev e113d94
 %global hawkey_version 0.4.2
 %global librepo_version 1.2.0
 %global libcomps_version 0.1.3
@@ -6,8 +6,8 @@
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.3
-Release:	2%{?dist}
+Version:	0.4.4
+Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -51,8 +51,8 @@ make doc-man
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-# %check
-# make ARGS="-V" test
+%check
+make ARGS="-V" test
 
 %files
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -76,6 +76,15 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Oct 14 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.4-1
+- fix: missing config file shouldn't cause a LibrepoExeption-triggered traceback. (Ales Kozumplik)
+- basic python 3 support added. (Jan Silhan)
+- input function in dnf.i18n renamed to ucd_input to avoid conflicts with buildin function (Jan Silhan)
+- Improve error reporting in hdrFromPackage() (Ales Kozumplik)
+- Resetting base.goal. (Ales Kozumplik)
+- fix: install does not report file conflicts (RhBug:1017278) (Ales Kozumplik)
+- Base.download_packages() must not assume self.progress exists. (Ales Kozumplik)
 
 * Mon Oct 7 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.3-2
 - remove: dnf.yum.rpmsack.RPMDBProblem*. (Ales Kozumplik)
