@@ -1,12 +1,12 @@
-%global gitrev e113d94
-%global hawkey_version 0.4.2
+%global gitrev 57d1d09
+%global hawkey_version 0.4.3
 %global librepo_version 1.2.0
 %global libcomps_version 0.1.3
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.4
+Version:	0.4.5
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -51,8 +51,8 @@ make doc-man
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
-# %check
-# make ARGS="-V" test
+%check
+make ARGS="-V" test
 
 %files
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -76,6 +76,21 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Sun Oct 20 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.5-1
+- Fix tracebacks during downloads of obsoleting transactions. (RhBug:1021087) (Ales Kozumplik)
+- fix: missing config file shouldn't cause a LibrepoExeption-triggered traceback. (Ales Kozumplik)
+- py3: don't want float results here (Zdenek Pavlas)
+- remove: repo.urlgrabber_opts() (Zdenek Pavlas)
+- Add repo.get_handle() returning a cached librepo handle (Zdenek Pavlas)
+- enhancement: LRO_FASTESTMIRROR (Zdenek Pavlas)
+- enhancement: use proxy settings (Zdenek Pavlas)
+- refactor: _handle_new_remote(), _handle_new_pkg_download() (Zdenek Pavlas)
+- Don't confuse users when file already exists (Zdenek Pavlas)
+- rename: YumBaseCli -> BaseCli. (Ales Kozumplik)
+- remove: Output.printtime and Output.simpleProgressBar. (Ales Kozumplik)
+- refactor: call YumOutput just Output. (Ales Kozumplik)
+- refactor: move dnf.yum.base.Base to dnf.base.Base (Ales Kozumplik)
 
 * Mon Oct 14 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.4-1
 - fix: missing config file shouldn't cause a LibrepoExeption-triggered traceback. (Ales Kozumplik)
