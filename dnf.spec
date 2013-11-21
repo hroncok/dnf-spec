@@ -1,12 +1,12 @@
-%global gitrev e200267
+%global gitrev 7db68be
 %global hawkey_version 0.4.5
-%global librepo_version 1.3.0
+%global librepo_version 1.4.0
 %global libcomps_version 0.1.4
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.7
+Version:	0.4.8
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -39,25 +39,58 @@ Requires(postun):	systemd
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package -n python3-dnf
+Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
+Group:		System Environment/Base
+BuildRequires:	python3
+BuildRequires:	python3-devel
+BuildRequires:	python3-hawkey >= %{hawkey_version}
+BuildRequires:	python3-iniparse
+BuildRequires:	python3-libcomps >= %{libcomps_version}
+BuildRequires:	python3-librepo >= %{librepo_version}
+BuildRequires:	python3-nose
+BuildRequires:	rpm-python3
+Requires:	python3-hawkey >= %{hawkey_version}
+Requires:	python3-iniparse
+Requires:	python3-libcomps >= %{libcomps_version}
+Requires:	python3-librepo >= %{librepo_version}
+Requires:	rpm-python3
+
+%description -n python3-dnf
+Package manager forked from Yum, using libsolv as a dependency resolver.
+
 %prep
 %setup -q -n dnf
+rm -rf py3
+mkdir ../py3
+cp -a . ../py3/
+mv ../py3 ./
 
 %build
 %cmake .
 make %{?_smp_mflags}
 make doc-man
+pushd py3
+%cmake -DPYTHON_DESIRED:str=3 -DWITH_MAN=0 .
+make %{?_smp_mflags}
+popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+pushd py3
+make install DESTDIR=$RPM_BUILD_ROOT
+popd
 
 %check
 make ARGS="-V" test
+pushd py3
+make ARGS="-V" test
+popd
 
 %files
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
-%{python_sitelib}/dnf/
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
@@ -65,6 +98,19 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.conf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{python_sitelib}/dnf/
+
+%files -n python3-dnf
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
+%{_bindir}/dnf
+%dir %{confdir}
+%config(noreplace) %{confdir}/dnf.conf
+%{_sysconfdir}/libreport/events.d/collect_dnf.conf
+%{_mandir}/man8/dnf.8.gz
+%{_mandir}/man8/dnf.conf.8.gz
+%{_unitdir}/dnf-makecache.service
+%{_unitdir}/dnf-makecache.timer
+%{python3_sitelib}/dnf/
 
 %post
 %systemd_post dnf-makecache.timer
@@ -76,6 +122,42 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu Nov 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.8-1
+- doc: api: add DeprecationWarning. (Ales Kozumplik)
+- remove: Base.run_with_package_names. (Ales Kozumplik)
+- history: do not traceback if a regular user tries to look into the history DB. (Ales Kozumplik)
+- cli: do not print the command name when concluding a history command. (Ales Kozumplik)
+- refactor: StartupConf is no longer needed. (Ales Kozumplik)
+- doc: api: reading configuration from filesystem. (Ales Kozumplik)
+- refactor: move Base.read_conf_file to Cli. (Ales Kozumplik)
+- config: do away with the two-phase parsing. (Ales Kozumplik)
+- removed shelve support in persistor.py (Jan Silhan)
+- removed per_arch_dict function from query.py (Jan Silhan)
+- removed _construct_result function from query.py (Jan Silhan)
+- removed latest_per_arch function from query.py (Jan Silhan)
+- Fix output when downgrading not installed package (RhBug:1030980) (Radek Holy)
+- remove: Conf.uid, Conf.progress_obj. (Ales Kozumplik)
+- Handle remote URLs. (RhBug:1030297) (Zdenek Pavlas)
+- runTransaction(): clean_used_packages() should run after verify_transaction() (Zdenek Pavlas)
+- remove: dnf.yum.misc.re_remote_url() (Zdenek Pavlas)
+- remove: Base.localPackages (Zdenek Pavlas)
+- remove: Base._cleanup (Zdenek Pavlas)
+- doc: api: document dnf.transaction.Transaction. (Ales Kozumplik)
+- fix: installs globbing for a file without a slash at the start. (RhBug:1030998) (Ales Kozumplik)
+- doc: api: document the dnf.subject.Subject API. (Ales Kozumplik)
+- rename: Base.group_lists -> Base._group_lists. (Ales Kozumplik)
+- groups: also display available environment groups. (RhBug:1029948) (Ales Kozumplik)
+- removed PycompDict (Jan Silhan)
+- doc: api: document Query. (Ales Kozumplik)
+- No fastestmirror "status" message if detection didn't run. (Zdenek Pavlas)
+- Add the "determining the fastest mirror" progress code. (Zdenek Pavlas)
+- rename: queries.Query -> query.Query. queries.Subject -> subject.Subject. (Ales Kozumplik)
+- refactor: initializing a Repo. (Ales Kozumplik)
+- setup deprecation warnings. (Ales Kozumplik)
+- refactor: do not rely on CliCache (dnf.conf.Cache previously) outside of Cli. (Ales Kozumplik)
+- spec file now generates dnf and dnf-python3 packages (Jan Silhan)
+- fixed py3 error when called next method (Jan Silhan)
 
 * Fri Nov 8 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.7-1
 - doc: api: Conf.installonly_limit. (Ales Kozumplik)
