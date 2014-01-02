@@ -1,12 +1,12 @@
-%global gitrev ceb088e
-%global hawkey_version 0.4.5
+%global gitrev 44f5516
+%global hawkey_version 0.4.7
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.9
+Version:	0.4.10
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -82,6 +82,11 @@ pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
+%global py2pluginpath %{python_sitelib}/dnf-plugins
+%global py3pluginpath %{python3_sitelib}/dnf-plugins
+mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
+mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
+
 %check
 make ARGS="-V" test
 pushd py3
@@ -99,6 +104,7 @@ popd
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 %{python_sitelib}/dnf/
+%{py2pluginpath}
 
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -111,6 +117,7 @@ popd
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 %{python3_sitelib}/dnf/
+%{py3pluginpath}
 
 %post
 %systemd_post dnf-makecache.timer
