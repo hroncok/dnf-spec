@@ -1,4 +1,4 @@
-%global gitrev 44f5516
+%global gitrev 3baa9cb
 %global hawkey_version 0.4.7
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -6,7 +6,7 @@
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.10
+Version:	0.4.11
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -129,6 +129,65 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu Jan 9 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.11-1
+- In an afterthought, why encourage clients to behave abnormally. (Ales Kozumplik)
+- plugins: redo the plugin config loading, with doc. (Ales Kozumplik)
+- plugins: --disableplugin works again. (Ales Kozumplik)
+- cli: re-enable recognized options in --help. (Ales Kozumplik)
+- cli: drop --enableplugin. (Ales Kozumplik)
+- plugins: do not traceback on a broken plugin. (Ales Kozumplik)
+- api: determine if particular metadata got refreshed (RhBug:1048988) (Ales Kozumplik)
+- apichange: plugins: turns out the pluginpath has to depend on py2/py3. (Ales Kozumplik)
+- doc: specify types of config options in conf_ref.rst. (Ales Kozumplik)
+- packaging: bump the year. (Ales Kozumplik)
+- doc: 'dnf provides' does not do extra filename heuristics. (RhBug:1048572) (Ales Kozumplik)
+- doc: document 'remove' alias for 'erase'. (RhBug:1048716) (Ales Kozumplik)
+- cli: cosmetic: help text incorrectly mentioning Yum. (RhBug:1048719) (Ales Kozumplik)
+- fix: typo in CLI's search(). (RhBug:1048402) (Ales Kozumplik)
+- refactor: cosmetic: imports in dnf.yum.config (Ales Kozumplik)
+- doc: faq: 'dnf update' vs 'yum update'. (Ales Kozumplik)
+- plugins: add basic support for reading in plugin config. (Ales Kozumplik)
+- tests: use iniparse.compat instead of configparser. (Ales Kozumplik)
+- doc: typo in 1f180f8. (Ales Kozumplik)
+- doc: faq: explain a 'check-update' oddity. (Ales Kozumplik)
+
+* Thu Jan 2 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.10-1
+- packaging: own the plugin directories. (Ales Kozumplik)
+- doc: cli_vs_yum: no 'Processing dependency' lines. (RhBug:1044999) (Ales Kozumplik)
+- doc: using --setopt from CLI. (RhBug:1044981) (Ales Kozumplik)
+- doc: fix a semantic error in cli_vs_yum's skip_if_unavailable doc. (Ales Kozumplik)
+- doc: tweak the 'proxy' documentation in conf_ref.rst (Ales Kozumplik)
+- fix some uses of str() in unicode context. (RhBug#1044502) (Zdenek Pavlas)
+- doc: document the "proxy" option. (Zdenek Pavlas)
+- doc: clarify repo_id_invalid() slightly. (Ales Kozumplik)
+- api: Extract repo ID validation to a separate function (RhBug:1018284) (Radek Holy)
+- tests: test drpm lookup, test basic rpm downloading (Zdenek Pavlas)
+- tests: add repository with delta rpms (Zdenek Pavlas)
+- fix: gracefully handle the exception when cannot create the locks directory. (RhBug:1036147) (Ales Kozumplik)
+- api: plugins: add hook for sack ready (RhBug:1038937) (Ales Kozumplik)
+- Fix TypeError raised when comparing YumHistoryPackage in Python 3. (Radek Holy)
+- Let history info command recognize 'last'. (Radek Holy)
+- Let install command recognize '@' (RhBug:1036211) (Radek Holy)
+- Fix AssertionError raised when undoing a package available in multiple repos (RhBug:1038403) (Radek Holy)
+- Fix handling of errors raised when undoing transactions. (Radek Holy)
+- get_package_target(): don't use yum compatibility attribute (Zdenek Pavlas)
+- Show correct installed size. (RhBug#1040255) (Zdenek Pavlas)
+- api: plugins: transaction() hook called after a transaction. (RhBug:967264) (Ales Kozumplik)
+- remove: Command.needTs*(). Unused. (Ales Kozumplik)
+- doc: api: dnf.cli. Commands and resgistering them. (Ales Kozumplik)
+- remove: basecmd parameter to Command.run() (Ales Kozumplik)
+- wip: the Command doc (Ales Kozumplik)
+- py3: fix exception catching from 96128b8. (Ales Kozumplik)
+- download_packages: propagate the librepo exception (RhBug:1035164) (Zdenek Pavlas)
+- rename: YumTerm -> Term. (Ales Kozumplik)
+- refactor: get rid of the return values from Command.run(). (Ales Kozumplik)
+- rename: Cli._register_command() -> register_command(). (Ales Kozumplik)
+- api: make Command available directly from dnf.cli. (Ales Kozumplik)
+- rename: cli.command.Command.doCommand() -> run() (Ales Kozumplik)
+- Log packages causing history undo failures. (Radek Holy)
+- Add pkg_spec attribute to MarkingError. (Radek Holy)
+- doc: api: Plugin.name. (Ales Kozumplik)
 
 * Tue Dec 3 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.9-1
 - doc: api: initiali version of the plugin interface. (Ales Kozumplik)
