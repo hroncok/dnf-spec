@@ -1,4 +1,4 @@
-%global gitrev 3baa9cb
+%global gitrev a64f78a
 %global hawkey_version 0.4.7
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -6,7 +6,7 @@
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.11
+Version:	0.4.12
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -129,6 +129,19 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Tue Jan 21 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.12-1
+- doc: groom the bandwidth, throttle option a bit. (Ales Kozumplik)
+- repos: disable fastestmirror by default. (RhBug:1051554) (Ales Kozumplik)
+- treat package reason 'unknown' in push_userinstalled() as 'user' (RhBug:1049025) (Ales Kozumplik)
+- cli: --cacheonly beats expired repos. (RhBug:1048468) (Ales Kozumplik)
+- util: function to log exceptions' tracebacks. (Ales Kozumplik)
+- add "throttle" and "bandwidth" options (RhBug:1045737) (Zdenek Pavlas)
+- update AUTHORS. (Ales Kozumplik)
+- Spelling fixes. (Ville Skyttä)
+- config: make sure faulty values do not propagate into the conf. (RhBug:1048488) (Ales Kozumplik)
+- cli: fix another ridiculous capitalization. (Ales Kozumplik)
+- doc: two new FAQs about MD synchronization. (Ales Kozumplik)
 
 * Thu Jan 9 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.11-1
 - In an afterthought, why encourage clients to behave abnormally. (Ales Kozumplik)
@@ -870,7 +883,7 @@ popd
 - Enable 'dnf distro-sync'.
 
 * Thu Nov 15 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.16-1.git9f050eb
-- massive dead code removals accross the code base (3k LOC dropped)
+- massive dead code removals across the code base (3k LOC dropped)
 - fix match_counter.sorted() tracebacks if its empty. (RhBug:873875)
 - fix: callback error in some rpm transactions because of nonexistent Package.verEQ.
 - Plain 'dnf update' ignores packages with broken deps. (RhBug:872948)
