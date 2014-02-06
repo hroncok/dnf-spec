@@ -7,7 +7,7 @@
 
 Name:		dnf
 Version:	0.4.13
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -132,7 +132,7 @@ popd
 
 %changelog
 
-* Thu Feb 6 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.13-1
+* Thu Feb 6 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.13-2
 - remove: dnf.util.log_last_excpetion (Radek Holy)
 - Make UnicodeStream text-based. (Radek Holy)
 - Fix AttributeError raised by setup_stdout when stdout does not have attribute encoding. (Radek Holy)
