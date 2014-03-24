@@ -1,4 +1,4 @@
-%global gitrev b81a7e5
+%global gitrev b89c961
 %global hawkey_version 0.4.12
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -6,7 +6,7 @@
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.4.18
+Version:	0.4.19
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -26,6 +26,7 @@ BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  systemd
+BuildRequires:  gettext
 Requires:	deltarpm
 Requires:	libreport-filesystem
 Requires:	python-hawkey >= %{hawkey_version}
@@ -79,6 +80,7 @@ popd
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+%find_lang %{name}
 pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
@@ -94,7 +96,7 @@ pushd py3
 make ARGS="-V" test
 popd
 
-%files
+%files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
@@ -108,7 +110,7 @@ popd
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
-%files -n python3-dnf
+%files -n python3-dnf -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
@@ -131,6 +133,34 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Mar 24 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.19-1
+- downloads: bump number of downloaded files on a skip. (RhBug:1079621) (Ales Kozumplik)
+- packaging: add dnf.cli.commands to the installation. (Ales Kozumplik)
+- refactor: put GroupCommand into its separate module. (Ales Kozumplik)
+- rename: make cli.commands a subpackage. (Ales Kozumplik)
+- AUTHORS: added Albert. (Ales Kozumplik)
+- test: fixed CacheTest.test_noroot() when running as root (Albert Uchytil)
+- AUTHORS: added Tim. (Ales Kozumplik)
+- fixes TypeError: '_DownloadErrors' object is not iterable (RhBug:1078832) (Tim Lauridsen)
+- fixed not including .mo files (Jan Silhan)
+- comps: _by_pattern() no longer does the comma splitting. (Ales Kozumplik)
+- including .mo files correctly (Jan Silhan)
+- tests: fix locale independence. (Radek Holy)
+- remove: unused trashy methods in dnf.yum.misc. (Ales Kozumplik)
+- persistor: do not save Groups if it didn't change (RhBug:1077173) (Ales Kozumplik)
+- tests: simplify the traceback logging. (Ales Kozumplik)
+- main: log IO errors etc. thrown even during Base.__exit__. (Ales Kozumplik)
+- logging: do not log IOError tracebacks in verbose mode. (Ales Kozumplik)
+- refactor: move out main._main()'s inner error handlers. (Ales Kozumplik)
+- added gettext as a build dependency  for translation files (Jan Silhan)
+- translation: updated .pot file and fetched fresh .po files from transifex (Jan Silhan)
+- removed redundant word from persistor translation (Jan Silhan)
+- translation: show relative path in generated pot file (Jan Silhan)
+- refactor: replaced type comparisons with isinstance (Jan Silhan)
+- translation: added mo files generation and including them in rpm package (Jan Silhan)
+- removed unused imports in base.py (Jan Silhan)
+- doc: typo in Base.group_install(). (Ales Kozumplik)
 
 * Mon Mar 17 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.18-1
 - api: drop items deprecated since 0.4.9 or earlier. (Ales Kozumplik)
