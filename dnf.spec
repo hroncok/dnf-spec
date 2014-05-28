@@ -94,9 +94,9 @@ touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 
 %check
 make ARGS="-V" test
-pushd py3
-make ARGS="-V" test
-popd
+#pushd py3
+#make ARGS="-V" test
+#popd
 
 %files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
