@@ -7,7 +7,7 @@
 
 Name:		dnf
 Version:	0.5.2
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -139,6 +139,9 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.5.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 
 * Wed May 28 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.2-1
 - doc: packaging: add license block to each .rst. (Ales Kozumplik)
