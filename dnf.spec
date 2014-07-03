@@ -1,13 +1,13 @@
-%global gitrev 272eb06
-%global hawkey_version 0.4.16
-%global librepo_version 1.7.3
+%global gitrev 70d6e3b
+%global hawkey_version 0.4.17
+%global librepo_version 1.7.4
 %global libcomps_version 0.1.6
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.5.2
-Release:	2%{?dist}
+Version:	0.5.3
+Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -94,15 +94,16 @@ touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 
 %check
 make ARGS="-V" test
-#pushd py3
-#make ARGS="-V" test
-#popd
+pushd py3
+make ARGS="-V" test
+popd
 
 %files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
+%config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
@@ -119,6 +120,7 @@ make ARGS="-V" test
 %{_bindir}/dnf
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
+%config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
@@ -139,9 +141,50 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
-* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.5.2-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
+* Thu Jul 3 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.3-1
+- packaging: bump hawkey dep to 0.4.17. (Ales Kozumplik)
+- api: remove Base.select_group(). (Ales Kozumplik)
+- tests: cleanup our base test case classes a bit. (Ales Kozumplik)
+- Add DNF itself among the protected packages. (Ales Kozumplik)
+- api: plugins: add the resolved() hook. (Ales Kozumplik)
+- api: expose Transaction introspecting in the API. (RhBug:1067156) (Ales Kozumplik)
+- api: add basic documentation for dnf.package.Package. (Ales Kozumplik)
+- tests: cosmetic: conf.protected_packages is ignored, drop it in FakeConf. (Ales Kozumplik)
+- cli: simplify exception handling more. (Ales Kozumplik)
+- Fixed a minor typo in user_faq - 'intall' should be 'install' (Martin Preisler)
+- fixed encoding of parsed config line (RhBug:1110800) (Jan Silhan)
+- syntax: replaced tab with spaces (Jan Silhan)
+- doc: acknowledge the existence of plugins on the man page (RhBug:1112669) (Ales Kozumplik)
+- improve the 'got root?' message of why a transaction couldn't start. (RhBug:1111569) (Ales Kozumplik)
+- traceback in Base.do_transaction. to_utf8() is gone since 06fb280. (Ales Kozumplik)
+- fix traceback from broken string formatting in _retreivePublicKey(). (RhBug:1111997) (Ales Kozumplik)
+- doc: replace Yum with DNF in command_ref.rst (Viktor Ashirov)
+- Fix a missing s in the title (mscherer)
+- api: add dnf.rpm.detect_releasever() (Ales Kozumplik)
+- Detect distroverpkg from 'system-release(release)' (RhBug:1047049) (Ales Kozumplik)
+- bulid: add dnf/conf to cmake. (Ales Kozumplik)
+- lint: clean up most lint messages in dnf.yum.config (Ales Kozumplik)
+- remove: couple of dead-code methods in dnf.yum.config. (Ales Kozumplik)
+- api: document client's responsibility to preset the substitutions. (RhBug:1104757) (Ales Kozumplik)
+- move: rpmUtils -> rpm. (Ales Kozumplik)
+- refactor: move yumvar out into its proper module dnf.conf.substitutions. (Ales Kozumplik)
+- refactor: turn dnf.conf into a package. (Ales Kozumplik)
+- doc: api_base.rst pointing to nonexistent method. (Ales Kozumplik)
+- remove: some logging from Transaction.populate_rpm_ts(). (Ales Kozumplik)
+- Update cli_vs_yum.rst (James Pearson)
+- api: doc: queries relation specifiers, with an example. (RhBug:1105009) (Ales Kozumplik)
+- doc: phrasing in ip_resolve documentation. (Ales Kozumplik)
+- cli: refactored transfering cmdline options to conf (Jan Silhan)
+- cli: added -4/-6 option for using ipv4/ipv6 connection (RhBug:1093420) (Jan Silhan)
+- cosmetic: empty set inicialization (Jan Silhan)
+- repo: improve the RepoError message to include URL. (Ales Kozumplik)
+- remove: dnf.yum.config.writeRawRepoFile(). (Ales Kozumplik)
+- remove: bunch of (now) blank config options. (Ales Kozumplik)
+- removed unique function (Jan Silhan)
+- tests: mock.assert_has_calls() enforces its iterable arguments in py3.4. (Ales Kozumplik)
+- logging: improve how repolist logs the total number of packages. (Ales Kozumplik)
+- logging: Base.close() should not log to the terminal. (Ales Kozumplik)
 
 * Wed May 28 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.2-1
 - doc: packaging: add license block to each .rst. (Ales Kozumplik)
