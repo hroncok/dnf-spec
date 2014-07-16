@@ -1,12 +1,12 @@
-%global gitrev 70d6e3b
-%global hawkey_version 0.4.17
-%global librepo_version 1.7.4
+%global gitrev 2aa5c6b
+%global hawkey_version 0.4.18
+%global librepo_version 1.7.5
 %global libcomps_version 0.1.6
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.5.3
+Version:	0.5.4
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -52,6 +52,7 @@ BuildRequires:	python3-libcomps >= %{libcomps_version}
 BuildRequires:	python3-librepo >= %{librepo_version}
 BuildRequires:	python3-nose
 BuildRequires:	rpm-python3
+Requires:	dnf = %{version}-%{release}
 Requires:	python3-hawkey >= %{hawkey_version}
 Requires:	python3-iniparse
 Requires:	python3-libcomps >= %{libcomps_version}
@@ -85,8 +86,10 @@ pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
+%global pluginconfpath %{confdir}/plugins
 %global py2pluginpath %{python_sitelib}/dnf-plugins
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
+mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
@@ -102,6 +105,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
+%dir %{pluginconfpath}
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
@@ -115,19 +119,9 @@ popd
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
-%files -n python3-dnf -f %{name}.lang
+%files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
-%{_bindir}/dnf
-%dir %{confdir}
-%config(noreplace) %{confdir}/dnf.conf
-%config(noreplace) %{confdir}/protected.d/dnf.conf
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%ghost %{_localstatedir}/log/%{name}.log
-%{_sysconfdir}/libreport/events.d/collect_dnf.conf
-%{_mandir}/man8/dnf.8.gz
-%{_mandir}/man8/dnf.conf.8.gz
-%{_unitdir}/dnf-makecache.service
-%{_unitdir}/dnf-makecache.timer
+%{_bindir}/dnf-3
 %{python3_sitelib}/dnf/
 %{py3pluginpath}
 
@@ -141,6 +135,41 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Wed Jul 16 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.4-1
+- pkg name from rpm transaction callback is in Unicode (RhBug:1118796) (Jan Silhan)
+- packaging: python3-dnf depends on dnf. (RhBug:1119032) (Ales Kozumplik)
+- Ship /usr/bin/dnf-3 to run DNF under Py3. (RhBug:1117678) (Ales Kozumplik)
+- packaging: own /etc/dnf/plugins. (RhBug:1118178) (Ales Kozumplik)
+- fix: pluginconfpath is a list. (Ales Kozumplik)
+- cosmetic: use classmethod as a decorator in config.py. (Ales Kozumplik)
+- cleanup: imports in dnf.cli.output (Ales Kozumplik)
+- lint: straightforward lint fixes in dnf.cli.output. (Ales Kozumplik)
+- Repo.__setattr__ has to use the parsed value. (Ales Kozumplik)
+- Repo priorities. (RhBug:1048973) (Ales Kozumplik)
+- repo: simplify how things are propagated to repo.hawkey_repo. (Ales Kozumplik)
+- refactor: concentrate Repo.hawkey_repo construction in Repo.__init__(). (Ales Kozumplik)
+- bash-completion: Update command and option lists, sort in same order as --help (Ville Skyttä)
+- bash-completion: Use grep -E instead of deprecated egrep (Ville Skyttä)
+- output: fixed identation of info command output (Jan Silhan)
+- i18n: calculates right width of asian utf-8 strings (RhBug:1116544) (Jan Silhan)
+- transifex update + renamed po files to Fedora conventions (Jan Silhan)
+- remove: CLI: --randomwait (Ales Kozumplik)
+- cli: fix: --installroot has to be used with --releasever (RhBug:1117293) (Ales Kozumplik)
+- Base.reset(goal=True) also resets the group persistor (RhBug:1116839) (Ales Kozumplik)
+- tests: fix failing DistroSync.test_distro_sync(). (Ales Kozumplik)
+- logging: RPM transaction markers are too loud. (Ales Kozumplik)
+- logging: silence drpm a bit. (Ales Kozumplik)
+- logging: put timing functionality into one place. (Ales Kozumplik)
+- repolist: fix traceback with disabled repos. (RhBug:1116845) (Ales Kozumplik)
+- refactor: cleanups in repolist. (Ales Kozumplik)
+- lint: remove some unused imports. (Ales Kozumplik)
+- cli: break out the repolsit command into a separate module. (Ales Kozumplik)
+- does not crash with non-ascii user name (RhBug:1108908) (Jan Silhan)
+- doc: document 'pluginpath' configuration option. (RhBug:1117102) (Ales Kozumplik)
+- Spelling fixes (Ville Skyttä)
+- cli: Fix software name in --version help (Ville Skyttä)
+- doc: ip_resolve documented at two places. remove one. (Ales Kozumplik)
 
 * Thu Jul 3 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.3-1
 - packaging: bump hawkey dep to 0.4.17. (Ales Kozumplik)
@@ -158,7 +187,7 @@ popd
 - doc: acknowledge the existence of plugins on the man page (RhBug:1112669) (Ales Kozumplik)
 - improve the 'got root?' message of why a transaction couldn't start. (RhBug:1111569) (Ales Kozumplik)
 - traceback in Base.do_transaction. to_utf8() is gone since 06fb280. (Ales Kozumplik)
-- fix traceback from broken string formatting in _retreivePublicKey(). (RhBug:1111997) (Ales Kozumplik)
+- fix traceback from broken string formatting in _retrievePublicKey(). (RhBug:1111997) (Ales Kozumplik)
 - doc: replace Yum with DNF in command_ref.rst (Viktor Ashirov)
 - Fix a missing s in the title (mscherer)
 - api: add dnf.rpm.detect_releasever() (Ales Kozumplik)
@@ -175,7 +204,7 @@ popd
 - Update cli_vs_yum.rst (James Pearson)
 - api: doc: queries relation specifiers, with an example. (RhBug:1105009) (Ales Kozumplik)
 - doc: phrasing in ip_resolve documentation. (Ales Kozumplik)
-- cli: refactored transfering cmdline options to conf (Jan Silhan)
+- cli: refactored transferring cmdline options to conf (Jan Silhan)
 - cli: added -4/-6 option for using ipv4/ipv6 connection (RhBug:1093420) (Jan Silhan)
 - cosmetic: empty set inicialization (Jan Silhan)
 - repo: improve the RepoError message to include URL. (Ales Kozumplik)
