@@ -1,12 +1,12 @@
-%global gitrev fe34987
-%global hawkey_version 0.4.18
+%global gitrev 2c846d0
+%global hawkey_version 0.5.0
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.5.5
+Version:	0.6.0
 Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -64,6 +64,16 @@ Requires:	rpm-python3
 %description -n python3-dnf
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package automatic
+Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Group:		System Environment/Base
+BuildRequires:	python2
+BuildRequires:  python-nose
+Requires:	dnf = %{version}-%{release}
+
+%description automatic
+Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+
 %prep
 %setup -q -n dnf
 rm -rf py3
@@ -118,14 +128,23 @@ popd
 %{_mandir}/man8/dnf.conf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf-3
+%exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
 %{py3pluginpath}
+
+%files automatic
+%doc AUTHORS COPYING PACKAGE-LICENSING
+%{_bindir}/dnf-automatic
+%config(noreplace) %{confdir}/automatic.conf
+%{_mandir}/man8/dnf.automatic.8.gz
+%{python_sitelib}/dnf/automatic
 
 %post
 %systemd_post dnf-makecache.timer
@@ -137,6 +156,66 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Tue Aug 12 2014 Aleš Kozumplík <ales@redhat.com> - 0.6.0-1
+- lint: fix convention violations in the new source files (Radek Holy)
+- Add "updateinfo [<output>] [<availability>] security" command. (RhBug:850912) (Radek Holy)
+- Add "updateinfo [<output>] [<availability>] bugfix" command. (Radek Holy)
+- Add "updateinfo [<output>] [<availability>] enhancement" command. (Radek Holy)
+- Add "updateinfo [<output>] [<availability>] [<package-name>...]" command. (Radek Holy)
+- Add "updateinfo [<output>] [<availability>] [<advisory>...]" command. (Radek Holy)
+- Add "updateinfo [<output>] all" command. (Radek Holy)
+- Add "updateinfo [<output>] updates" command. (Radek Holy)
+- Add "updateinfo [<output>] installed" command. (Radek Holy)
+- Add "-v updateinfo info" command. (Radek Holy)
+- Add "updateinfo info" command. (Radek Holy)
+- Add "updateinfo list" command. (Radek Holy)
+- Add "updateinfo available" command. (Radek Holy)
+- Add "updateinfo summary" command. (Radek Holy)
+- Add basic updateinfo command. (Radek Holy)
+- test: add updateinfo to the testing repository (Radek Holy)
+- test: support adding directory repos to Base stubs (Radek Holy)
+- test: really don't break other tests with the DRPM fixture (Radek Holy)
+- Load UpdateInfo.xml during the sack preparation. (Radek Holy)
+- Add Repo.updateinfo_fn. (Radek Holy)
+- lint: add Selector calls to false positives, it's a hawkey type. (Ales Kozumplik)
+- removed recursive calling of ucd in DownloadError (Jan Silhan)
+- does not throw error when selector is empty (RhBug:1127206) (Jan Silhan)
+- remove etc/version-groups.conf, not used. (Ales Kozumplik)
+- lint: dnf.conf.parser (Ales Kozumplik)
+- rename: dnf.conf.parser.varReplace()->substitute() (Ales Kozumplik)
+- pycomp: add urlparse/urllib.parser. (Ales Kozumplik)
+- move: dnf.yum.parser -> dnf.conf.parser. (Ales Kozumplik)
+- packaging: add dnf-automatic subpackage. (Ales Kozumplik)
+- doc: properly list the authors. (Ales Kozumplik)
+- automatic: add documentation, including dnf.automatic(8) man page. (Ales Kozumplik)
+- dnf-automatic: tool supplying the yum-cron functionality. (Ales Kozumplik)
+- doc: cosmetic: fixed indent in proxy directive (Jan Silhan)
+- include directive support added (RhBug:1055910) (Jan Silhan)
+- refactor: move MultiCallList to util. (Ales Kozumplik)
+- cli: do not output that extra starting newline in list_transaction(). (Ales Kozumplik)
+- refactor: extract CLI cachedir magic to cli.cachedir_fit. (Ales Kozumplik)
+- transifex update (Jan Silhan)
+- move: test_output to tests/cli. (Ales Kozumplik)
+- refactor: move Term into its own module. (Ales Kozumplik)
+- refactoring: cleanup and linting in dnf.exceptions. (Ales Kozumplik)
+- lint: test_cli.py (Ales Kozumplik)
+- lint: rudimentary cleanups in tests.support. (Ales Kozumplik)
+- refactor: loggers are module-level variables. (Ales Kozumplik)
+- groups: promote unknown-reason installed packages to 'group' on group install. (RhBug:1116666) (Ales Kozumplik)
+- c82267f refactoring droppped plugins.run_transaction(). (Ales Kozumplik)
+- cli: sort packages in the transaction summary. (Ales Kozumplik)
+- refactor: cli: massively simplify how errors are propagated from do_transaction(). (Ales Kozumplik)
+- groups: rearrange things in CLI so user has to confirm the group changes. (Ales Kozumplik)
+- groups: commiting the persistor data should only happen at one place. (Ales Kozumplik)
+- groups: visualizing the groups transactions. (Ales Kozumplik)
+- Add dnf.util.get_in() to navigate nested dicts with sequences of keys. (Ales Kozumplik)
+- group persistor: generate diffs between old and new DBs. (Ales Kozumplik)
+- Better quoting in dnf_pylint. (Ales Kozumplik)
+- lint: logging.py. (Ales Kozumplik)
+- Do not print tracebacks to the tty on '-d 10' (RhBug:1118272) (Ales Kozumplik)
+- search: do not double-report no matches. (Ales Kozumplik)
+- refactor: move UpgradeToCommand to its own module. (Ales Kozumplik)
 
 * Mon Jul 28 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.5-1
 - packaging: also add pyliblzma to BuildRequires. (Ales Kozumplik)
