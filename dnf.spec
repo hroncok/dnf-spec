@@ -1,75 +1,92 @@
-%global gitrev 2c846d0
+%global gitrev da278da
 %global hawkey_version 0.5.0
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
+%global rpm_version 4.12.0
 
 %global confdir %{_sysconfdir}/dnf
 
-Name:		dnf
-Version:	0.6.0
-Release:	1%{?dist}
-Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-Group:		System Environment/Base
+Name:       dnf
+Version:    0.6.1
+Release:    1%{?dist}
+Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
+Group:      System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
-License:	GPLv2+ and GPLv2 and GPL
-URL:		https://github.com/akozumpl/dnf
-Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
-BuildArch:	noarch
-BuildRequires:	cmake
-BuildRequires:	pyliblzma
-BuildRequires:	python2
-BuildRequires:	python-bugzilla
-BuildRequires:	python-hawkey >= %{hawkey_version}
-BuildRequires:	python-iniparse
-BuildRequires:	python-libcomps >= %{libcomps_version}
-BuildRequires:	python-librepo >= %{librepo_version}
+License:    GPLv2+ and GPLv2 and GPL
+URL:        https://github.com/akozumpl/dnf
+Source0:    http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
+BuildArch:  noarch
+BuildRequires:  cmake
+BuildRequires:  pygpgme
+BuildRequires:  pyliblzma
+BuildRequires:  python2
+BuildRequires:  python-bugzilla
+BuildRequires:  python-hawkey >= %{hawkey_version}
+BuildRequires:  python-iniparse
+BuildRequires:  python-libcomps >= %{libcomps_version}
+BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
-BuildRequires:  rpm-python
+BuildRequires:  rpm-python >= %{rpm_version}
 BuildRequires:  systemd
 BuildRequires:  gettext
-Requires:	deltarpm
-Requires:	libreport-filesystem
-Requires:	pyliblzma
-Requires:	python-hawkey >= %{hawkey_version}
-Requires:	python-iniparse
-Requires:	python-libcomps >= %{libcomps_version}
-Requires:	python-librepo >= %{librepo_version}
-Requires:	rpm-python
-Requires(post):		systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
+Requires:   deltarpm
+Requires:   libreport-filesystem
+Requires:   pygpgme
+Requires:   pyliblzma
+Requires:   python-hawkey >= %{hawkey_version}
+Requires:   python-iniparse
+Requires:   python-libcomps >= %{libcomps_version}
+Requires:   python-librepo >= %{librepo_version}
+Requires:   rpm-python >= %{rpm_version}
+Requires(post):     systemd
+Requires(preun):    systemd
+Requires(postun):   systemd
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package -n dnf-yum
+Conflicts:      yum
+Requires:   dnf = %{version}-%{release}
+Summary:    As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
+%description -n dnf-yum
+As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
 %package -n python3-dnf
-Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-Group:		System Environment/Base
-BuildRequires:	python3
-BuildRequires:	python3-devel
-BuildRequires:	python3-hawkey >= %{hawkey_version}
-BuildRequires:	python3-iniparse
-BuildRequires:	python3-libcomps >= %{libcomps_version}
-BuildRequires:	python3-librepo >= %{librepo_version}
-BuildRequires:	python3-nose
-BuildRequires:	rpm-python3
-Requires:	dnf = %{version}-%{release}
-Requires:	python3-hawkey >= %{hawkey_version}
-Requires:	python3-iniparse
-Requires:	python3-libcomps >= %{libcomps_version}
-Requires:	python3-librepo >= %{librepo_version}
-Requires:	rpm-python3
+Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
+Group:      System Environment/Base
+BuildRequires:  python3
+BuildRequires:  python3-devel
+BuildRequires:  python3-hawkey >= %{hawkey_version}
+BuildRequires:  python3-iniparse
+BuildRequires:  python3-libcomps >= %{libcomps_version}
+BuildRequires:  python3-librepo >= %{librepo_version}
+BuildRequires:  python3-nose
+BuildRequires:  python3-pygpgme
+BuildRequires:  rpm-python3 >= %{rpm_version}
+Requires:   dnf = %{version}-%{release}
+Requires:   python3-hawkey >= %{hawkey_version}
+Requires:   python3-iniparse
+Requires:   python3-libcomps >= %{libcomps_version}
+Requires:   python3-librepo >= %{librepo_version}
+Requires:   python3-pygpgme
+Requires:   rpm-python3 >= %{rpm_version}
 
 %description -n python3-dnf
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package automatic
-Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
-Group:		System Environment/Base
-BuildRequires:	python2
+Summary:    Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Group:      System Environment/Base
+BuildRequires:  python2
 BuildRequires:  python-nose
-Requires:	dnf = %{version}-%{release}
+BuildRequires:  systemd
+Requires:   dnf = %{version}-%{release}
+Requires(post):     systemd
+Requires(preun):    systemd
+Requires(postun):   systemd
 
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
@@ -106,6 +123,7 @@ mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
+ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
 %check
 make ARGS="-V" test
@@ -132,6 +150,10 @@ popd
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
+%files -n dnf-yum
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
+%{_bindir}/yum
+
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf-3
@@ -144,6 +166,8 @@ popd
 %{_bindir}/dnf-automatic
 %config(noreplace) %{confdir}/automatic.conf
 %{_mandir}/man8/dnf.automatic.8.gz
+%{_unitdir}/dnf-automatic.service
+%{_unitdir}/dnf-automatic.timer
 %{python_sitelib}/dnf/automatic
 
 %post
@@ -155,7 +179,69 @@ popd
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
 
+%post automatic
+%systemd_post dnf-automatic.timer
+
+%preun automatic
+%systemd_preun dnf-automatic.timer
+
+%postun automatic
+%systemd_postun_with_restart dnf-automatic.timer
+
 %changelog
+
+* Thu Aug 28 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.1-1
+- packaging: add dnf-yum. (Ales Kozumplik)
+- cli: added plugins missing hint (RhBug:1132335) (Jan Silhan)
+- using ts.addReinstall for package reinstallation (RhBug:1071854) (Jan Silhan)
+- Add history redo command. (Radek Holy)
+- Add a TransactionConverter class. (Radek Holy)
+- bash-completion: complete `help` with commands (Igor Gnatenko)
+- bash-completion: generate commands dynamically (Igor Gnatenko)
+- base: group_install accepts glob exclude names (RhBug:1131969) (Jan Silhan)
+- README: changed references to new repo location (Jan Silhan)
+- transifex update (Jan Silhan)
+- syntax: fixed indentation (Jan Silhan)
+- removed lt.po which was accidentally added in c2e9b39 (Jan Silhan)
+- lint: fix convention violations in the new source files (Radek Holy)
+- Fix setting of the resolving demand for repo-pkgs command. (Radek Holy)
+- Add repository-packages remove-or-distro-sync command. (RhBug:908764) (Radek Holy)
+- fix: traceback that GroupPersistor._original might not exist. (RhBug:1130878) (Ales Kozumplik)
+- pycomp: drop to_ord(). (Ales Kozumplik)
+- refactor: crypto.keyids_from_pubring() using _extract_signing_subkey(). (Ales Kozumplik)
+- fix: another 32-bit hex() problem in crypto. (Ales Kozumplik)
+- remove: pgpmsg.py. (Ales Kozumplik)
+- replace the whole of pgpmsg.py with gpgme and a dummy context. (Ales Kozumplik)
+- cosmetic: sort methods of Repo according to the coding standard. (Ales Kozumplik)
+- Fix dnf.crypto.keyinfo2keyid(). (Ales Kozumplik)
+- util: get rid of an inconvenient 'default_handle' constant. (Ales Kozumplik)
+- simplify misc.import_key_to_pubring()'s signature. (Ales Kozumplik)
+- cleanup: header of dnf.yum.pgpmsg. (Ales Kozumplik)
+- crypto: add crypto.retrieve() and drop Base._retrievePublicKey() (Ales Kozumplik)
+- cosmetic: order of functions in dnf.crypto. (Ales Kozumplik)
+- unicode: fixed locale.format error (RhBug:1130432) (Jan Silhan)
+- remove: misc.valid_detached_sig(). (Ales Kozumplik)
+- tests: some tests for dnf.crypto. (Ales Kozumplik)
+- crypto: use pubring_dir() context manager systematically. (Ales Kozumplik)
+- Drop unused argument from getgpgkeyinfo(). (Ales Kozumplik)
+- remove: Base._log_key_import(). (Ales Kozumplik)
+- doc: cosmetic: conf_ref: maintain alphabetical order of the options. (Ales Kozumplik)
+- crypto: document crypto options for repo. (Ales Kozumplik)
+- crypto: fixup procgpgkey() to work with Py3 bytes. (Ales Kozumplik)
+- dnf.util.urlopen(): do not create unicode streams for Py3 and bytes for Py2 by default. (Ales Kozumplik)
+- lint: delinting of the repo_gpgcheck patchset. (Ales Kozumplik)
+- Add CLI parts to let the user confirm key imports. (RhBug:1118236) (Ales Kozumplik)
+- gpg: make key decoding work under Py3. (Ales Kozumplik)
+- crypto: add dnf.crypto and fix things up so untrusted repo keys can be imported. (Ales Kozumplik)
+- transifex update (Jan Silhan)
+- syntax: fixed indentation (Jan Silhan)
+- packaging: pygpgme is a requirement. (Ales Kozumplik)
+- remove: support for gpgcakey gets dropped for now. (Ales Kozumplik)
+- repo: smarter _DetailedLibrepoError construction. (Ales Kozumplik)
+- repo: nicer error message on librepo's perform() failure. (Ales Kozumplik)
+- get_best_selector returns empty selector instead of None (Jan Silhan)
+- packaging: add automatic's systemd unit files. (RhBug:1109915) (Ales Kozumplik)
+- automatic: handle 'security' update_cmd. (Ales Kozumplik)
 
 * Tue Aug 12 2014 Aleš Kozumplík <ales@redhat.com> - 0.6.0-1
 - lint: fix convention violations in the new source files (Radek Holy)
