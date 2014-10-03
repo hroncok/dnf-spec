@@ -190,7 +190,7 @@ popd
 
 %changelog
 
-- Fri Oct 3 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.2-1
+* Fri Oct 3 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.2-1
 - transifex update (Jan Silhan)
 - refactor: move MakeCacheCommand out into its own file. (Ales Kozumplik)
 - api: add dnf.cli.CliError. (Ales Kozumplik)
