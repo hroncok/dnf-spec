@@ -1,4 +1,4 @@
-%global gitrev da278da
+%global gitrev e1a35e5
 %global hawkey_version 0.5.0
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -6,87 +6,87 @@
 
 %global confdir %{_sysconfdir}/dnf
 
-Name:       dnf
-Version:    0.6.1
-Release:    1%{?dist}
-Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
-Group:      System Environment/Base
+Name:		dnf
+Version:	0.6.2
+Release:	1%{?dist}
+Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
+Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
-License:    GPLv2+ and GPLv2 and GPL
-URL:        https://github.com/akozumpl/dnf
-Source0:    http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
-BuildArch:  noarch
-BuildRequires:  cmake
-BuildRequires:  pygpgme
-BuildRequires:  pyliblzma
-BuildRequires:  python2
-BuildRequires:  python-bugzilla
-BuildRequires:  python-hawkey >= %{hawkey_version}
-BuildRequires:  python-iniparse
-BuildRequires:  python-libcomps >= %{libcomps_version}
-BuildRequires:  python-librepo >= %{librepo_version}
+License:	GPLv2+ and GPLv2 and GPL
+URL:		https://github.com/akozumpl/dnf
+Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
+BuildArch:	noarch
+BuildRequires:	cmake
+BuildRequires:	pygpgme
+BuildRequires:	pyliblzma
+BuildRequires:	python2
+BuildRequires:	python-bugzilla
+BuildRequires:	python-hawkey >= %{hawkey_version}
+BuildRequires:	python-iniparse
+BuildRequires:	python-libcomps >= %{libcomps_version}
+BuildRequires:	python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python >= %{rpm_version}
 BuildRequires:  systemd
 BuildRequires:  gettext
-Requires:   deltarpm
-Requires:   libreport-filesystem
-Requires:   pygpgme
-Requires:   pyliblzma
-Requires:   python-hawkey >= %{hawkey_version}
-Requires:   python-iniparse
-Requires:   python-libcomps >= %{libcomps_version}
-Requires:   python-librepo >= %{librepo_version}
-Requires:   rpm-python >= %{rpm_version}
-Requires(post):     systemd
-Requires(preun):    systemd
-Requires(postun):   systemd
+Requires:	deltarpm
+Requires:	libreport-filesystem
+Requires:	pygpgme
+Requires:	pyliblzma
+Requires:	python-hawkey >= %{hawkey_version}
+Requires:	python-iniparse
+Requires:	python-libcomps >= %{libcomps_version}
+Requires:	python-librepo >= %{librepo_version}
+Requires:	rpm-python >= %{rpm_version}
+Requires(post):		systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package -n dnf-yum
 Conflicts:      yum
-Requires:   dnf = %{version}-%{release}
-Summary:    As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+Requires:	dnf = %{version}-%{release}
+Summary:	As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 %description -n dnf-yum
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 %package -n python3-dnf
-Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
-Group:      System Environment/Base
-BuildRequires:  python3
-BuildRequires:  python3-devel
-BuildRequires:  python3-hawkey >= %{hawkey_version}
-BuildRequires:  python3-iniparse
-BuildRequires:  python3-libcomps >= %{libcomps_version}
-BuildRequires:  python3-librepo >= %{librepo_version}
-BuildRequires:  python3-nose
-BuildRequires:  python3-pygpgme
-BuildRequires:  rpm-python3 >= %{rpm_version}
-Requires:   dnf = %{version}-%{release}
-Requires:   python3-hawkey >= %{hawkey_version}
-Requires:   python3-iniparse
-Requires:   python3-libcomps >= %{libcomps_version}
-Requires:   python3-librepo >= %{librepo_version}
-Requires:   python3-pygpgme
-Requires:   rpm-python3 >= %{rpm_version}
+Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
+Group:		System Environment/Base
+BuildRequires:	python3
+BuildRequires:	python3-devel
+BuildRequires:	python3-hawkey >= %{hawkey_version}
+BuildRequires:	python3-iniparse
+BuildRequires:	python3-libcomps >= %{libcomps_version}
+BuildRequires:	python3-librepo >= %{librepo_version}
+BuildRequires:	python3-nose
+BuildRequires:	python3-pygpgme
+BuildRequires:	rpm-python3 >= %{rpm_version}
+Requires:	dnf = %{version}-%{release}
+Requires:	python3-hawkey >= %{hawkey_version}
+Requires:	python3-iniparse
+Requires:	python3-libcomps >= %{libcomps_version}
+Requires:	python3-librepo >= %{librepo_version}
+Requires:	python3-pygpgme
+Requires:	rpm-python3 >= %{rpm_version}
 
 %description -n python3-dnf
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package automatic
-Summary:    Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
-Group:      System Environment/Base
-BuildRequires:  python2
+Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Group:		System Environment/Base
+BuildRequires:	python2
 BuildRequires:  python-nose
 BuildRequires:  systemd
-Requires:   dnf = %{version}-%{release}
-Requires(post):     systemd
-Requires(preun):    systemd
-Requires(postun):   systemd
+Requires:	dnf = %{version}-%{release}
+Requires(post):		systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
 
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
@@ -189,6 +189,37 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+
+- Fri Oct 3 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.2-1
+- transifex update (Jan Silhan)
+- refactor: move MakeCacheCommand out into its own file. (Ales Kozumplik)
+- api: add dnf.cli.CliError. (Ales Kozumplik)
+- Update user_faq.rst (Stef Krie)
+- Make --refresh play nice with lazy commands. (Ales Kozumplik)
+- bash-completion: more faster completing install/remove (Igor Gnatenko)
+- bash-completion: complete 'clean|groups|repolist' using help (Igor Gnatenko)
+- Allow some commands to use stale metadata. (RhBug:909856) (Ales Kozumplik)
+- does not install new pkgs when updating from local pkgs (RhBug:1134893) (Jan Silhan)
+- doesn't upgrade packages by installing local packages (Related:RhBug:1138700) (Jan Silhan)
+- refactor: repo: separate concepts of 'expiry' and 'sync strategy'. (Ales Kozumplik)
+- fix: dnf.cli.util.* leaks file handles. (Ales Kozumplik)
+- remove: YumRPMTransError. (Ales Kozumplik)
+- rename: Base's runTransaction -> _run_transaction(). (Ales Kozumplik)
+- drop unused parameter of Base.verify_transaction(). (Ales Kozumplik)
+- bash-completion: new completion from scratch (RhBug:1070902) (Igor Gnatenko)
+- py3: add queue.Queue to pycomp. (Ales Kozumplik)
+- locking: store lockfiles with the resource they are locking. (RhBug:1124316) (Ales Kozumplik)
+- groups: marks reason 'group' for packages that have no record yet (RhBug:1136584) (Jan Silhan)
+- goal: renamed undefined name variable (Jan Silhan)
+- refactor: split out and clean up the erase command. (Ales Kozumplik)
+- py3: fix traceback in fmtColumns() on a non-subscriptable 'columns'. (Ales Kozumplik)
+- groups: allow erasing depending packages on remove (RhBug:1135861) (Ales Kozumplik)
+- history: fixed wrong set operation (RhBug:1136223) (Jan Silhan)
+- base: does not reinstall pkgs from local rpms with install command (RhBug:1122617) (Jan Silhan)
+- refactor: crypto: drop the integer keyid representation altogether. (Ales Kozumplik)
+- crypto: fix importing rpmfusion keys. (RhBug:1133830) (Ales Kozumplik)
+- refactor: crypto: Key is a class, not an "info" dict. (Ales Kozumplik)
+- repos: fix total downloaded size reporting for cached packages. (RhBug:1121184) (Ales Kozumplik)
 
 * Thu Aug 28 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.1-1
 - packaging: add dnf-yum. (Ales Kozumplik)
