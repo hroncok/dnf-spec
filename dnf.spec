@@ -1,92 +1,94 @@
-%global gitrev e1a35e5
-%global hawkey_version 0.5.0
+%global gitrev 9e8fd6b
+%global hawkey_version 0.5.2
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
 
 %global confdir %{_sysconfdir}/dnf
 
-Name:		dnf
-Version:	0.6.2
-Release:	1%{?dist}
-Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-Group:		System Environment/Base
+Name:       dnf
+Version:    0.6.3
+Release:    1%{?dist}
+Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
+Group:      System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
-License:	GPLv2+ and GPLv2 and GPL
-URL:		https://github.com/akozumpl/dnf
-Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
-BuildArch:	noarch
-BuildRequires:	cmake
-BuildRequires:	pygpgme
-BuildRequires:	pyliblzma
-BuildRequires:	python2
-BuildRequires:	python-bugzilla
-BuildRequires:	python-hawkey >= %{hawkey_version}
-BuildRequires:	python-iniparse
-BuildRequires:	python-libcomps >= %{libcomps_version}
-BuildRequires:	python-librepo >= %{librepo_version}
+License:    GPLv2+ and GPLv2 and GPL
+URL:        https://github.com/rpm-software-management/dnf
+Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{gitrev}.tar.xz
+BuildArch:  noarch
+BuildRequires:  cmake
+BuildRequires:  pygpgme
+BuildRequires:  pyliblzma
+BuildRequires:  python2
+BuildRequires:  python-bugzilla
+BuildRequires:  python-hawkey >= %{hawkey_version}
+BuildRequires:  python-iniparse
+BuildRequires:  python-libcomps >= %{libcomps_version}
+BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python >= %{rpm_version}
 BuildRequires:  systemd
 BuildRequires:  gettext
-Requires:	deltarpm
-Requires:	libreport-filesystem
-Requires:	pygpgme
-Requires:	pyliblzma
-Requires:	python-hawkey >= %{hawkey_version}
-Requires:	python-iniparse
-Requires:	python-libcomps >= %{libcomps_version}
-Requires:	python-librepo >= %{librepo_version}
-Requires:	rpm-python >= %{rpm_version}
-Requires(post):		systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
+Requires:   deltarpm
+Requires:   libreport-filesystem
+Requires:   pygpgme
+Requires:   pyliblzma
+Requires:   python-hawkey >= %{hawkey_version}
+Requires:   python-iniparse
+Requires:   python-libcomps >= %{libcomps_version}
+Requires:   python-librepo >= %{librepo_version}
+Requires:   rpm-plugin-systemd-inhibit
+Requires:   rpm-python >= %{rpm_version}
+Requires(post):     systemd
+Requires(preun):    systemd
+Requires(postun):   systemd
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package -n dnf-yum
 Conflicts:      yum
-Requires:	dnf = %{version}-%{release}
-Summary:	As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+Requires:   dnf = %{version}-%{release}
+Summary:    As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 %description -n dnf-yum
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 %package -n python3-dnf
-Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-Group:		System Environment/Base
-BuildRequires:	python3
-BuildRequires:	python3-devel
-BuildRequires:	python3-hawkey >= %{hawkey_version}
-BuildRequires:	python3-iniparse
-BuildRequires:	python3-libcomps >= %{libcomps_version}
-BuildRequires:	python3-librepo >= %{librepo_version}
-BuildRequires:	python3-nose
-BuildRequires:	python3-pygpgme
-BuildRequires:	rpm-python3 >= %{rpm_version}
-Requires:	dnf = %{version}-%{release}
-Requires:	python3-hawkey >= %{hawkey_version}
-Requires:	python3-iniparse
-Requires:	python3-libcomps >= %{libcomps_version}
-Requires:	python3-librepo >= %{librepo_version}
-Requires:	python3-pygpgme
-Requires:	rpm-python3 >= %{rpm_version}
+Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
+Group:      System Environment/Base
+BuildRequires:  python3
+BuildRequires:  python3-devel
+BuildRequires:  python3-hawkey >= %{hawkey_version}
+BuildRequires:  python3-iniparse
+BuildRequires:  python3-libcomps >= %{libcomps_version}
+BuildRequires:  python3-librepo >= %{librepo_version}
+BuildRequires:  python3-nose
+BuildRequires:  python3-pygpgme
+BuildRequires:  rpm-python3 >= %{rpm_version}
+Requires:   dnf = %{version}-%{release}
+Requires:   python3-hawkey >= %{hawkey_version}
+Requires:   python3-iniparse
+Requires:   python3-libcomps >= %{libcomps_version}
+Requires:   python3-librepo >= %{librepo_version}
+Requires:   python3-pygpgme
+Requires:   rpm-plugin-systemd-inhibit
+Requires:   rpm-python3 >= %{rpm_version}
 
 %description -n python3-dnf
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package automatic
-Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
-Group:		System Environment/Base
-BuildRequires:	python2
+Summary:    Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Group:      System Environment/Base
+BuildRequires:  python2
 BuildRequires:  python-nose
 BuildRequires:  systemd
-Requires:	dnf = %{version}-%{release}
-Requires(post):		systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
+Requires:   dnf = %{version}-%{release}
+Requires(post):     systemd
+Requires(preun):    systemd
+Requires(postun):   systemd
 
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
@@ -140,6 +142,8 @@ popd
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
+%ghost %{_localstatedir}/log/%{name}-rpm.log
+%ghost %{_localstatedir}/log/%{name}-plugin.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
@@ -189,6 +193,37 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+
+* Mon Dec 8 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.3-1
+- transifex update (Jan Silhan)
+- bash-completion: don't query if we trying to use local file (RhBug:1153543) (Igor Gnatenko)
+- bash-completion: fix local completion (RhBug:1151231) (Igor Gnatenko)
+- bash-completion: use sqlite cache from dnf-plugins-core (Igor Gnatenko)
+- base: output a whole list of installed packages with glob pattern (RhBug:1163063) (Michal Luscon)
+- cli: _process_demands() does not respect --caheonly (RhBug:1151854) (Michal Luscon)
+- new authors added (Jan Silhan)
+- install: allow installation of provides with glob (Related:RhBug:1148353) (Michal Luscon)
+- tests: removed mock patch for _, P_ (Jan Silhan)
+- fixed error summary traceback (RhBug:1151740) (Jan Silhan)
+- doc: swap command alternative mentioned (RhBug:1110780) (Jan Silhan)
+- base: package_reinstall works only with the same package versions (Jan Silhan)
+- base: package_install allows install different arch of installed package (Jan Silhan)
+- base: package_downgrade prints message on failure (Jan Silhan)
+- base: package_upgrade does not reinstall or downgrade (RhBug:1149972) (Jan Silhan)
+- groups: searches also within localized names (RhBug:1150474) (Jan Silhan)
+- Run tests with C locales. (Daniel Mach)
+- Adds new motd emitter for dnf-automatic (RhBug:995537) (Kushal Das)
+- Fix wrong cache directory path used to clean up binary cache (Satoshi Matsumoto)
+- fix: traceback in history info <name> (RhBug: 1149952) (Tim Lauridsen)
+- logging: added logrotate script for hawkey.log (RhBug:1149350) (Jan Silhan)
+- output: renamed displayPkgsInGroups (Jan Silhan)
+- logging: renamed log files (RhBug:1074715)" (Jan Silhan)
+- comps: Environment differentiates optional and mandatory groups (Jan Silhan)
+- group info handles environments (RhBug:1147523) (Jan Silhan)
+- deltarpm enabled by default (RhBug:1148208) (Jan Silhan)
+- doc: deplist command (Jan Silhan)
+- doc: minor fixes + repo references changed (Jan Silhan)
+- spec: requires rpm-plugin-systemd-inhibit (RhBug:1109927) (Jan Silhan)
 
 * Fri Oct 3 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.2-1
 - transifex update (Jan Silhan)
