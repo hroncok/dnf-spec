@@ -8,7 +8,7 @@
 
 Name:       dnf
 Version:    0.6.3
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Package manager forked from Yum, using libsolv as a dependency resolver
 Group:      System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -139,6 +139,7 @@ popd
 %dir %{confdir}
 %dir %{pluginconfpath}
 %config(noreplace) %{confdir}/dnf.conf
+%dir %{confdir}/protected.d
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
@@ -193,6 +194,8 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Fri Dec 19 2014 Ralf Corsepius <corsepiu@fedoraproject.org> - 0.6.3-3
+- Own %%{configdir}/protected.d (RHBZ#1175098).
 
 * Mon Dec 8 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.3-2
 - logging: reverted naming from a6dde81
