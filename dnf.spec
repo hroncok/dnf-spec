@@ -1,8 +1,8 @@
-%global gitrev 13dce34
-%global hawkey_version 0.5.3
-%global librepo_version 1.7.5
-%global libcomps_version 0.1.6
-%global rpm_version 4.12.0
+%{!?gitrev: %global gitrev 3a22891}
+%{!?hawkey_version: %global hawkey_version 0.5.3}
+%{!?librepo_version: %global librepo_version 1.7.5}
+%{!?libcomps_version: %global libcomps_version 0.1.6}
+%{!?rpm_version: %global rpm_version 4.12.0}
 
 %global confdir %{_sysconfdir}/dnf
 
@@ -12,7 +12,7 @@
 
 Name:		dnf
 Version:	0.6.4
-Release:	1%{?dist}
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -200,6 +200,8 @@ popd
 %changelog
 
 * Wed Feb 4 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-1
+- Adapt to librepo-1.7.13, metalink and mirrorlist are not loaded anymore when the repo is local. (Radek Holy)
+- not raises value error when no metadata exist (Jan Silhan)
 - Remove lock files during boot (RhBug:1154476) (Michal Luscon)
 - doc: groups are ordered not categories (Jan Silhan)
 - doc: added Package attributes to API (Jan Silhan)
@@ -836,4 +838,3 @@ popd
 - refactor: Move MockBase methods to BaseStubMixin. (Radek Holy)
 - refactor: Move repo-pkgs info to a standalone class instead of reusing the InfoCommand. (Radek Holy)
 - refactor: Move InfoCommand._print_packages to BaseCli.output_packages. (Radek Holy)
-
