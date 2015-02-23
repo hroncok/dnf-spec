@@ -29,7 +29,7 @@ BuildRequires:  gettext
 BuildRequires:  python-bugzilla
 BuildRequires:  python-sphinx
 BuildRequires:  systemd
-%if 0%{?fedora} >= 22
+%if 0%{?fedora} >= 23
 Requires:   python3-dnf = %{version}-%{release}
 %else
 Requires:   python-dnf = %{version}-%{release}
@@ -139,7 +139,7 @@ mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
-%if 0%{?fedora} >= 22
+%if 0%{?fedora} >= 23
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
 %else
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-2 $RPM_BUILD_ROOT%{_bindir}/dnf
@@ -156,10 +156,11 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %{_mandir}/man8/dnf.8.gz
-%{_mandir}/man8/dnf.conf.8.gz
+%{_mandir}/man5/dnf.conf.5.gz
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{_tmpfilesdir}/dnf.conf
 
 %files conf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -224,8 +225,8 @@ popd
 
 %changelog
 
-* Wed Feb 23 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-2
-- dnf running on python3 by default for f22+
+* Mon Feb 23 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-2
+- main package is divided into many subpackages
 
 * Wed Feb 4 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-1
 - Adapt to librepo-1.7.13, metalink and mirrorlist are not loaded anymore when the repo is local. (Radek Holy)
