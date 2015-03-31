@@ -1,8 +1,7 @@
-%{!?gitrev: %global gitrev 719208b}
-%{!?hawkey_version: %global hawkey_version 0.5.3}
-%{!?librepo_version: %global librepo_version 1.7.5}
-%{!?libcomps_version: %global libcomps_version 0.1.6}
-%{!?rpm_version: %global rpm_version 4.12.0}
+%global hawkey_version 0.5.4
+%global librepo_version 1.7.5
+%global libcomps_version 0.1.6
+%global rpm_version 4.12.0
 
 %global confdir %{_sysconfdir}/dnf
 
@@ -11,8 +10,8 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	0.6.4
-Release:	2%{?snapshot}%{?dist}
+Version:	0.6.5
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -22,7 +21,7 @@ URL:		https://github.com/rpm-software-management/dnf
 # cd dnf/package
 # ./archive
 # tarball will be generated in $HOME/rpmbuild/sources/
-Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{gitrev}.tar.xz
+Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{version}.tar.gz
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -47,7 +46,7 @@ Summary:    Configuration files for DNF.
 Configuration files for DNF.
 
 %package -n dnf-yum
-Conflicts:      yum
+Conflicts:      yum < 3.4.3-505
 Requires:   dnf = %{version}-%{release}
 Summary:    As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 %description -n dnf-yum
@@ -64,6 +63,9 @@ BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  rpm-python >= %{rpm_version}
+%if 0%{?fedora} >= 21
+Recommends: bash-completion
+%endif
 Requires:   dnf-conf = %{version}-%{release}
 Requires:   deltarpm
 Requires:   pygpgme
@@ -74,6 +76,7 @@ Requires:   python-libcomps >= %{libcomps_version}
 Requires:   python-librepo >= %{librepo_version}
 Requires:   rpm-plugin-systemd-inhibit
 Requires:   rpm-python >= %{rpm_version}
+Obsoletes:  dnf <= 0.6.4
 %description -n python-dnf
 Python 2 interface to DNF.
 
@@ -88,6 +91,9 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-pygpgme
 BuildRequires:  rpm-python3 >= %{rpm_version}
+%if 0%{?fedora} >= 21
+Recommends: bash-completion
+%endif
 Requires:   dnf-conf = %{version}-%{release}
 Requires:   deltarpm
 Requires:   python3-hawkey >= %{hawkey_version}
@@ -97,7 +103,7 @@ Requires:   python3-librepo >= %{librepo_version}
 Requires:   python3-pygpgme
 Requires:   rpm-plugin-systemd-inhibit
 Requires:   rpm-python3 >= %{rpm_version}
-Obsoletes:  dnf <= 0.6.4-1
+Obsoletes:  dnf <= 0.6.4
 %description -n python3-dnf
 Python 3 interface to DNF.
 
@@ -112,7 +118,7 @@ Requires(postun):	systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%setup -q -n dnf
+%setup -q -n dnf-%{version}
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
@@ -141,10 +147,13 @@ mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 %if 0%{?fedora} >= 23
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
+mv $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-3 $RPM_BUILD_ROOT%{_bindir}/dnf-automatic
+rm $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-2
 %else
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-2 $RPM_BUILD_ROOT%{_bindir}/dnf
+mv $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-2 $RPM_BUILD_ROOT%{_bindir}/dnf-automatic
+rm $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-3
 %endif
-ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
 %check
 make ARGS="-V" test
@@ -156,11 +165,9 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %{_mandir}/man8/dnf.8.gz
-%{_mandir}/man5/dnf.conf.5.gz
-%config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
+%{_mandir}/man8/yum2dnf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
-%{_tmpfilesdir}/dnf.conf
 
 %files conf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -170,16 +177,20 @@ popd
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%ghost %{_localstatedir}/%{_lib}/dnf
 %ghost %{_localstatedir}/log/hawkey.log
 %ghost %{_localstatedir}/log/%{name}.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
 %ghost %{_localstatedir}/log/%{name}.plugin.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
+%{_mandir}/man5/dnf.conf.5.gz
+%{_tmpfilesdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
 %files -n dnf-yum
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/yum
+%{_mandir}/man8/yum.8.gz
 
 %files -n python-dnf
 %{_bindir}/dnf-2
@@ -203,7 +214,12 @@ popd
 %{_mandir}/man8/dnf.automatic.8.gz
 %{_unitdir}/dnf-automatic.service
 %{_unitdir}/dnf-automatic.timer
+%if 0%{?fedora} >= 23
+%{python3_sitelib}/dnf/automatic
+%{python3_sitelib}/dnf/automatic/__pycache__/*
+%else
 %{python_sitelib}/dnf/automatic
+%endif
 
 %post
 %systemd_post dnf-makecache.timer
@@ -224,6 +240,89 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Mar 31 2015 Michal Luscon <mluscon@redhat.com> 0.6.5-1
+- subject: expand every glob name only once (RhBug:1203151) (Michal Luscon)
+- group mark: skips already installed groups (Jan Silhan)
+- Merge pull request #246 from mluscon/yum2dnf (mluscon)
+- Add yum2dnf man page (Michal Luscon)
+- doc: extend cli_vs_yum (Michal Luscon)
+- dnf-yum package does not conflict with yum 3.4.3-505+ (Jan Silhan)
+- fixed double set of demand from 0e4276f (Jan Silhan)
+- group: remove cmd don't load available_repos, see 04da412 (Jan Silhan)
+- spec: /var/lib/dnf owned by dnf-conf (Jan Silhan)
+- spec: apply the weak dependencies only on F21+ (Radek Holy)
+- dnf-automatic: fixed python_sitelib (RhBug:1199450) (Jan Silhan)
+- Add release instructions (Michal Luscon)
+- setup tito to bump version in VERSION.cmake (Michal Luscon)
+- initialize to use tito (Michal Luscon)
+- prepare repo for tito build system (Michal Luscon)
+- spec: recommends bash-completion (RhBug:1190671) (Jan Silhan)
+- completion: work with just python(3)-dnf (Jan Silhan)
+- spec: move necessary files inside python(3) subpackages (RhBug:1191579) (Jan Silhan)
+- bash-completion: use python method to get commands (RhBug:1187579) (Igor Gnatenko)
+- api: exposed pluginconfpath main config (RhBug:1195325) (Jan Silhan)
+- updated AUTHORS (Jan Silhan)
+- add reinstall to bash_completion (Alberto Ruiz)
+- added new packages to @System for duplicated query test (Michael Mraka)
+- test for duplicated, installonly and latest_limit pkgs (Michael Mraka)
+- tests for autoremove, extras and recent pkgs (Michael Mraka)
+- moved push_userinstalled from base to goal (Michael Mraka)
+- filter or skip 'n' latest packages (Michael Mraka)
+- moved recent to query (Michael Mraka)
+- moved autoremove to query (Michael Mraka)
+- moved extras list to query (Michael Mraka)
+- create query for installonly packages (Michael Mraka)
+- create query for duplicated packages (Michael Mraka)
+- cosmetic: base: fixed pylint warnings (Jan Silhan)
+- do transaction cleanup after plugin hook (RhBug:1185977) (Michal Luscon)
+- base: extend download lock (RhBug:1157233) (Michal Luscon)
+- lock: output meaningful error for malformed lock file (Michal Luscon)
+- util: fix race condition in ensure_dir() (Michal Luscon)
+- lock: switch metadata lock to blocking mode (Michal Luscon)
+- install nonmandatory group packages as optional (Related:RhBug:1167881) (Michal Luscon)
+- remove command deletes whole dependency tree (RhBug:1154202) (Jan Silhan)
+- cmd list takes <package-name-specs> as parameter, revert of 526e674 (Jan Silhan)
+- spec: own /var/lib/dnf directory (RhBug:1198999) (Jan Silhan)
+- transifex update (Jan Silhan)
+- doc: fixed systemd execution of dnf-automatic (Jan Silhan)
+- doc: how to run dnf-automatic (RhBug:1195240) (Jan Silhan)
+- cosmetic: added forgotten :api mark from 05b03fc (Jan Silhan)
+- api: exposed Repo.skip_if_unavailable config (RhBug:1189083) (Jan Silhan)
+- updated documentation for 'dnf list autoremove' (Michael Mraka)
+- reuse list_autoremove() in autoremove command (Michael Mraka)
+- function for autoremove package list (Michael Mraka)
+- implemented dnf list autoremove (Michael Mraka)
+- exclude not documented history subcommands (RhBug:1193914,1193915) (Jan Silhan)
+- better file pattern recognition (RhBug:1195385) (Jan Silhan)
+- spec: fix Obsoletes of the new DNF (Radek Holy)
+- remove boot only constraint and add missing download lock (Michal Luscon)
+- util: remove unused user_run_dir() function (Michal Luscon)
+- lock: change the destination folder of locks to allow suided programs work properly (RhBug:1195661) (Michal Luscon)
+- install dnf-3 only when python3 is enabled (thanks glensc) (Jan Silhan)
+- fixed unicode Download error (RhBug:1190458) (Jan Silhan)
+- log: print metadata age along with timestamp (Petr Spacek)
+- cli: fix double expansion of cachedir (RhBug:1194685) (Michal Luscon)
+- removed unused dnf-makecache.cron (Jan Silhan)
+- renamed erase command to remove (RhBug:1160806) (Jan Silhan)
+- spec: made python3-dnf package installed by default in f23 (Jan Silhan)
+- AUTHORS: changed email address (Jan Silhan)
+- doc: improve the documentation of the "install" command (Radek Holy)
+- "dnf install non-existent" should fail (Radek Holy)
+- tests: add some tests of Base.install (Radek Holy)
+- tests: add some tests of Base.package_install (Radek Holy)
+- Revert "doesn't upgrade packages by installing local packages" (RhBug:1160950) (Radek Holy)
+- lint: fix all Pylint errors in test_install (Radek Holy)
+- tests: add some tests to test_install (Radek Holy)
+- tests: improve some tests in test_install (Radek Holy)
+- cosmetic: reorder tests in test_install (Radek Holy)
+- cosmetic: rename some tests in test_install and add some docstrings (Radek Holy)
+- AUTHORS: updated (Jan Silhan)
+- Add support for armv6hl (Peter Hjalmarsson)
+- doc: subject.__init__(): what is pkg_spec (Jan Silhan)
+- doc: mentioning raising IOError from Base.fill_sack() (Jan Silhan)
+- option_parser: fixed splitting multiple values (RhBug:1186710) (Jan Silhan)
+- AUTHORS: updated (Jan Silhan)
+- Standardize words describing boolean data type (Christopher Meng)
 
 * Mon Feb 23 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-2
 - main package is divided into many subpackages
@@ -867,4 +966,3 @@ popd
 - refactor: Move MockBase methods to BaseStubMixin. (Radek Holy)
 - refactor: Move repo-pkgs info to a standalone class instead of reusing the InfoCommand. (Radek Holy)
 - refactor: Move InfoCommand._print_packages to BaseCli.output_packages. (Radek Holy)
-
