@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.0.1
-Release:	1%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -22,6 +22,8 @@ URL:		https://github.com/rpm-software-management/dnf
 # ./archive
 # tarball will be generated in $HOME/rpmbuild/sources/
 Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{version}.tar.gz
+Patch0:     0001-conf-change-minrate-threshold-to-librepo-default-RhB.patch
+Patch1:     0002-group-fixed-installing-of-already-installed-environm.patch
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -119,6 +121,8 @@ Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
 %setup -q -n dnf-%{version}
+%patch0 -p1
+%patch1 -p1
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
@@ -241,6 +245,10 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Jun 09 2015 Michal Luscon <mluscon@redhat.com> 1.0.1-2
+- conf: change minrate threshold to librepo default (RhBug:1212320)
+- group: fixed installation of already installed environments
+
 * Tue Jun 09 2015 Michal Luscon <mluscon@redhat.com> 1.0.1-1
 - doc: document variables in repo conf (Michal Luscon)
 - groups: temporary fix for group remove (RhBug:1214968) (Michal Luscon)
