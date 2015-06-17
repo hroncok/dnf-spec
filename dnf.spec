@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.0.1
-Release:	2%{?snapshot}%{?dist}
+Release:	3%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -245,6 +245,9 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Tue Jun 09 2015 Michal Luscon <mluscon@redhat.com> 1.0.1-2
 - conf: change minrate threshold to librepo default (RhBug:1212320)
 - group: fixed installation of already installed environments
