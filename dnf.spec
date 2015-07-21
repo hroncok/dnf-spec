@@ -1,4 +1,4 @@
-%global hawkey_version 0.5.5
+%global hawkey_version 0.5.9
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
@@ -10,8 +10,8 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.0.1
-Release:	3%{?snapshot}%{?dist}
+Version:	1.0.2
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -22,8 +22,6 @@ URL:		https://github.com/rpm-software-management/dnf
 # ./archive
 # tarball will be generated in $HOME/rpmbuild/sources/
 Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{version}.tar.gz
-Patch0:     0001-conf-change-minrate-threshold-to-librepo-default-RhB.patch
-Patch1:     0002-group-fixed-installing-of-already-installed-environm.patch
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -121,8 +119,6 @@ Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
 %setup -q -n dnf-%{version}
-%patch0 -p1
-%patch1 -p1
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
@@ -148,6 +144,7 @@ mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
+mkdir -p $RPM_BUILD_ROOT%{_var}/cache/dnf
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 %if 0%{?fedora} >= 23
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
@@ -172,6 +169,7 @@ popd
 %{_mandir}/man8/yum2dnf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{_var}/cache/dnf
 
 %files conf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -235,6 +233,13 @@ popd
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
 
+%posttrans
+# cleanup pre-1.0.2 style cache
+for arch in armv7hl i686 x86_64 ; do
+    rm -rf /var/cache/dnf/$arch
+done
+exit 0
+
 %post automatic
 %systemd_post dnf-automatic.timer
 
@@ -245,8 +250,61 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
-* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.1-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+* Tue Jul 21 2015 Jan Silhan <jsilhan@redhat.com> 1.0.2-2
+- fixed python3 syntax error from f427aa2 (Jan Silhan)
+
+* Fri Jul 17 2015 Michal Luscon <mluscon@redhat.com> 1.0.2-1
+- give --allowerasing hint when error occurs during resolution (RhBug:1148630)
+  (Jan Silhan)
+- show --best hint with skipped packages everytime (RhBug:1176351) (Jan Silhan)
+- notify about skipped packages when upgrade (RhBug:1210445) (Jan Silhan)
+- dnf-automatic: Document apply_updates=no behavior wrt keepcache (Ville
+  Skyttä)
+- persistor: share functionality of JSONDB (Jan Silhan)
+- keepcache=0 persists packages till next successful transaction
+  (RhBug:1220074) (Jan Silhan)
+- do not use releasever in cache path (related to RhBug:1173107) (Michael
+  Mraka)
+- doc: add dnf list use case (Michal Luscon)
+- repo: allow ntlm proxy auth (RhBug:1219199) (Michal Luscon)
+- add a script which updates release notes (Radek Holy)
+- doc: reverse the order of release notes (Radek Holy)
+- completion_helper: fix tb if list XXX is not known arg (RhBug:1220040) (Igor
+  Gnatenko)
+- configurable maximum number of parallel downloads (RhBug:1230975) (Igor
+  Gnatenko)
+- add info to bash_completion (1nsan3)
+- dnf upgrade does not try to upgrade uninstalled packages (RhBug: 1234763)
+  (Adam Salih)
+- dnf group list now checks every package and prints out only invalid ones
+  (Adam Salih)
+- install: return zero exit code if group is already installed (RhBug:1232815)
+  (Michal Luscon)
+- doc: add -b which does the same as --best (Igor Gnatenko)
+- support category groups (Michael Mraka)
+- cli test update for repofrompath (Michael Mraka)
+- documentation for --repofrompath (Michael Mraka)
+- implemented --repofrompath option (RhBug:1113384) (Michael Mraka)
+- doc: document filter provides and obsoletes (Michal Luscon)
+- doc: extend --quiet explanation (RhBug:1133979) (Jan Silhan)
+- fixed dnf-automatic email emitter unicode error (RhBug:1238958) (Jan Silhan)
+- doc: be specific what 'available' means in list/info (Jan Silhan)
+- cosmetic: fixed typo (RhBug:1238252) (Jan Silhan)
+- groups: clean dependencies (Michal Luscon)
+- groups: fix removing of env that contains previously removed group (Michal
+  Luscon)
+- groups: fix removing of empty group (Michal Luscon)
+- AUTHORS: updated (Jan Silhan)
+- bash-completion: ignore sqlite3 user configuration (Peter Simonyi)
+- Fix package name for rawhide .repo files (Frank Dana)
+- Add 'transaction_display' to DemandSheet (Will Woods)
+- translation: update (Jan Silhan)
+- translation: use zanata instead of transifex (Jan Silhan)
+- Updated Polish translation (Piotr Drąg)
+- updated georgian translation (George Machitidze)
+- group: fixed installing of already installed environment (Jan Silhan)
+- conf: change minrate threshold to librepo default (RhBug:1212320) (Michal
+  Luscon)
 
 * Tue Jun 09 2015 Michal Luscon <mluscon@redhat.com> 1.0.1-2
 - conf: change minrate threshold to librepo default (RhBug:1212320)
