@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.0.2
-Release:	2%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}.1
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -22,6 +22,8 @@ URL:		https://github.com/rpm-software-management/dnf
 # ./archive
 # tarball will be generated in $HOME/rpmbuild/sources/
 Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{version}.tar.gz
+Patch0:     baseurl.patch
+
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -119,6 +121,7 @@ Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
 %setup -q -n dnf-%{version}
+%patch0 -p1
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
@@ -250,6 +253,9 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Jul 21 2015 Dennis Gilmore <dennis@ausil.us> 1.0.2-2.1
+- add patch to respact baseurl in metadata rhbz#1245286
+
 * Tue Jul 21 2015 Jan Silhan <jsilhan@redhat.com> 1.0.2-2
 - fixed python3 syntax error from f427aa2 (Jan Silhan)
 
