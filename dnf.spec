@@ -17,6 +17,7 @@ Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 License:	GPLv2+ and GPLv2 and GPL
 URL:		https://github.com/rpm-software-management/dnf
 Source0:    https://github.com/rpm-software-management/dnf/archive/%{name}-%{version}.tar.gz
+Patch0:    dnf-1.1.2-1-to-dnf-1.1.2-2.patch
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -137,6 +138,7 @@ Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
 %setup -q -n dnf-%{version}
+%patch0 -p1
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
