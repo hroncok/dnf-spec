@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.1.3
-Release:	1%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -268,6 +268,9 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Thu Oct 15 2015 Robert Kuska <rkuska@redhat.com> - 1.1.3-2
+- Rebuilt for Python3.5 rebuild
+
 * Wed Oct 14 2015 Michal Luscon <mluscon@redhat.com> 1.1.3-1
 - Update command_ref.rst (Jaroslav Mracek)
 - Change in automatic.conf email settings to prevent email error with default
