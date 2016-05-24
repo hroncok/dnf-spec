@@ -23,12 +23,15 @@
 
 Name:           dnf
 Version:        1.1.9
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
+Patch0:         enforce-api-reflect-changes-from-992475-in-completio.patch
+Patch1:         enforce-api-add-compatibility-methods-for-renamed-co.patch
+Patch2:         Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -152,7 +155,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup
+%autosetup -p1
 mkdir build
 %if %{with python3}
 mkdir build-py3
@@ -309,6 +312,11 @@ exit 0
 %endif
 
 %changelog
+* Tue May 24 2016 Michal Luscon <mluscon@redhat.com> 1.1.9-2
+- Revert "group: treat mandatory pkgs as mandatory if strict=true" (RhBug:1337731)
+- enforce-api: reflect changes from #992475 in completion_helper (RhBug:1338504)
+- enforce-api: add compatibility methods for renamed counterparts (RhBug:1338564)
+
 * Thu May 19 2016 Igor Gnatenko <ignatenko@redhat.com> 1.1.9-1
 - doc: release notes 1.1.9 (Igor Gnatenko)
 - spec: correctly set up requirements for python subpkg (Igor Gnatenko)
