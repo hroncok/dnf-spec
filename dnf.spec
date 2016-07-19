@@ -23,7 +23,7 @@
 
 Name:           dnf
 Version:        1.1.9
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -312,6 +312,9 @@ exit 0
 %endif
 
 %changelog
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.9-3
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
 * Tue May 24 2016 Michal Luscon <mluscon@redhat.com> 1.1.9-2
 - Revert "group: treat mandatory pkgs as mandatory if strict=true" (RhBug:1337731)
 - enforce-api: reflect changes from #992475 in completion_helper (RhBug:1338504)
