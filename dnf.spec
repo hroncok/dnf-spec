@@ -23,7 +23,7 @@
 
 Name:           dnf
 Version:        1.1.9
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -118,6 +118,7 @@ Python 2 interface to DNF.
 %if %{with python3}
 %package -n python3-%{name}
 Summary:        Python 3 interface to DNF.
+%{?system_python_abi}
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
@@ -312,6 +313,9 @@ exit 0
 %endif
 
 %changelog
+* Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.1.9-4
+- Add %%{?system_python_abi}
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.9-3
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
