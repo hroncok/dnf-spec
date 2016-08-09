@@ -23,7 +23,7 @@
 
 Name:           dnf
 Version:        1.1.9
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -195,6 +195,7 @@ mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 %if %{with python3}
+%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexec}/system-python|' %{buildroot}%{_bindir}/dnf}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 %else
@@ -313,6 +314,9 @@ exit 0
 %endif
 
 %changelog
+* Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.1.9-5
+- Also change shebang for %%{?system_python_abi} in %%{_bindir}/dnf
+
 * Tue Aug 09 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.1.9-4
 - Add %%{?system_python_abi}
 
