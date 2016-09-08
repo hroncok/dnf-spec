@@ -1,7 +1,9 @@
-%global hawkey_version 0.6.1
+%global hawkey_min_ver 0.6.1
+%global hawkey_max_ver 0.7.0
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
+%global dnf_langpacks_ver 0.15.1-6
 
 %global confdir %{_sysconfdir}/%{name}
 
@@ -23,12 +25,14 @@
 
 Name:           dnf
 Version:        1.1.10
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}-1.tar.gz
+# https://github.com/rpm-software-management/dnf/commit/61df26328ed819e4f220760a98ce31529c4ec609
+Patch0001:      0001-cli-repolist-fix-showing-repository-name-with-disabl.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -66,12 +70,19 @@ Provides:       dnf-command(updateinfo)
 Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
 
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      dnf-langpacks < %{dnf_langpacks_ver}
+
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package conf
 Summary:        Configuration files for DNF
 Requires:       libreport-filesystem
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      dnf-langpacks-conf < %{dnf_langpacks_ver}
 
 %description conf
 Configuration files for DNF.
@@ -88,7 +99,7 @@ As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
-BuildRequires:  python-hawkey >= %{hawkey_version}
+BuildRequires:  python-hawkey >= %{hawkey_min_ver}
 BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
@@ -104,7 +115,8 @@ Recommends:     bash-completion
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
-Requires:       python-hawkey >= %{hawkey_version}
+Requires:       python-hawkey >= %{hawkey_min_ver}
+Conflicts:      python-hawkey >= %{hawkey_max_ver}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
@@ -115,6 +127,9 @@ Requires:       python2-pygpgme
 %endif
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python >= %{rpm_version}
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      python-dnf-langpacks < %{dnf_langpacks_ver}
 
 %description -n python2-%{name}
 Python 2 interface to DNF.
@@ -125,7 +140,7 @@ Summary:        Python 3 interface to DNF.
 %{?system_python_abi}
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
-BuildRequires:  python3-hawkey >= %{hawkey_version}
+BuildRequires:  python3-hawkey >= %{hawkey_min_ver}
 BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-librepo >= %{librepo_version}
@@ -135,13 +150,17 @@ BuildRequires:  rpm-python3 >= %{rpm_version}
 Recommends:     bash-completion
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
-Requires:       python3-hawkey >= %{hawkey_version}
+Requires:       python3-hawkey >= %{hawkey_min_ver}
+Conflicts:      python3-hawkey >= %{hawkey_max_ver}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
 Requires:       python3-pygpgme
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python3 >= %{rpm_version}
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      python3-dnf-langpacks < %{dnf_langpacks_ver}
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
