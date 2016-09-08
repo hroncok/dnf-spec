@@ -178,7 +178,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup -n %{name}-%{name}-%{version}-1
+%autosetup -n %{name}-%{name}-%{version}-1 -p1
 mkdir build
 %if %{with python3}
 mkdir build-py3
@@ -336,6 +336,10 @@ exit 0
 %endif
 
 %changelog
+* Thu Sep 08 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.1.10-2
+- Obsolete dnf-langpacks
+- Backport patch for dnf repolist disabled
+
 * Thu Aug 18 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.1.10-1
 - Update to 1.1.10
 
