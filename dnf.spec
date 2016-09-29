@@ -1,8 +1,8 @@
-%global hawkey_min_ver 0.6.1
-%global hawkey_max_ver 0.7.0
-%global librepo_version 1.7.16
-%global libcomps_version 0.1.6
-%global rpm_version 4.12.0
+%global hawkey_version 0.7.0
+%global librepo_version 1.7.19
+%global libcomps_version 0.1.8
+%global rpm_version 4.13.0-0.rc1.29
+%global min_plugins_core 0.1.13
 %global dnf_langpacks_ver 0.15.1-6
 
 %global confdir %{_sysconfdir}/%{name}
@@ -24,15 +24,13 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        1.1.10
-Release:        2%{?dist}
+Version:        2.0.0
+Release:        0.rc1.1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
-Source0:        %{url}/archive/%{name}-%{version}-1.tar.gz
-# https://github.com/rpm-software-management/dnf/commit/61df26328ed819e4f220760a98ce31529c4ec609
-Patch0001:      0001-cli-repolist-fix-showing-repository-name-with-disabl.patch
+Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -64,11 +62,14 @@ Provides:       dnf-command(provides)
 Provides:       dnf-command(reinstall)
 Provides:       dnf-command(remove)
 Provides:       dnf-command(repolist)
+Provides:       dnf-command(repoquery)
 Provides:       dnf-command(repository-packages)
 Provides:       dnf-command(search)
 Provides:       dnf-command(updateinfo)
 Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
+Conflicts:      python2-dnf-plugins-core < %{min_plugins_core}
+Conflicts:      python3-dnf-plugins-core < %{min_plugins_core}
 
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
@@ -99,7 +100,7 @@ As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
-BuildRequires:  python-hawkey >= %{hawkey_min_ver}
+BuildRequires:  python-hawkey >= %{hawkey_version}
 BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
@@ -115,8 +116,7 @@ Recommends:     bash-completion
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
-Requires:       python-hawkey >= %{hawkey_min_ver}
-Conflicts:      python-hawkey >= %{hawkey_max_ver}
+Requires:       python-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
@@ -140,7 +140,7 @@ Summary:        Python 3 interface to DNF.
 %{?system_python_abi}
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
-BuildRequires:  python3-hawkey >= %{hawkey_min_ver}
+BuildRequires:  python3-hawkey >= %{hawkey_version}
 BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-librepo >= %{librepo_version}
@@ -150,8 +150,7 @@ BuildRequires:  rpm-python3 >= %{rpm_version}
 Recommends:     bash-completion
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
-Requires:       python3-hawkey >= %{hawkey_min_ver}
-Conflicts:      python3-hawkey >= %{hawkey_max_ver}
+Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
@@ -178,7 +177,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup -n %{name}-%{name}-%{version}-1 -p1
+%autosetup
 mkdir build
 %if %{with python3}
 mkdir build-py3
@@ -226,9 +225,6 @@ mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
-# This will eventually be the new default location for repo files
-mkdir %{buildroot}%{_sysconfdir}/distro.repos.d/
-
 %check
 pushd build
   ctest -VV
@@ -248,13 +244,6 @@ popd
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
 
-%posttrans
-# cleanup pre-1.0.2 style cache
-for arch in %{ix86} x86_64 %{arm} aarch64 ppc %{sparc} %{alpha} s390 s390x %{power64} %{mips} ia64 ; do
-    rm -rf /var/cache/dnf/$arch
-done
-exit 0
-
 %post automatic
 %systemd_post dnf-automatic.timer
 
@@ -264,11 +253,9 @@ exit 0
 %postun automatic
 %systemd_postun_with_restart dnf-automatic.timer
 
-
 %files -f %{name}.lang
 %{_bindir}/%{name}
 %if 0%{?rhel} && 0%{?rhel} <= 7
-%dir %{_sysconfdir}/bash_completion.d
 %{_sysconfdir}/bash_completion.d/%{name}
 %else
 %dir %{_datadir}/bash-completion
@@ -280,7 +267,6 @@ exit 0
 %{_unitdir}/%{name}-makecache.service
 %{_unitdir}/%{name}-makecache.timer
 %{_var}/cache/%{name}/
-%ghost %{_sysconfdir}/distro.repos.d
 
 %files conf
 %license COPYING PACKAGE-LICENSING
@@ -336,6 +322,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Sep 29 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-0.rc1.1
+- See http://dnf.readthedocs.io/en/latest/release_notes.html
+
 * Thu Sep 08 2016 Igor Gnatenko <ignatenko@redhat.com> - 1.1.10-2
 - Obsolete dnf-langpacks
 - Backport patch for dnf repolist disabled
