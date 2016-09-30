@@ -25,12 +25,15 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc1.1%{?dist}
+Release:        0.rc1.2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
+# https://github.com/rpm-software-management/dnf/pull/627
+# https://bugzilla.redhat.com/show_bug.cgi?id=1380580
+Patch0001:      0001-repo-add-rpm-as-alias-for-rpm-md-RhBug-1380580.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -177,7 +180,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup
+%autosetup -p1
 mkdir build
 %if %{with python3}
 mkdir build-py3
@@ -322,6 +325,9 @@ popd
 %endif
 
 %changelog
+* Fri Sep 30 2016 Igor Gnatenko <ignatenko@redhat.com> - 2.0.0-0.rc1.2
+- Add alias 'rpm' for 'type=' option (RHBZ #1380580)
+
 * Thu Sep 29 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-0.rc1.1
 - See http://dnf.readthedocs.io/en/latest/release_notes.html
 

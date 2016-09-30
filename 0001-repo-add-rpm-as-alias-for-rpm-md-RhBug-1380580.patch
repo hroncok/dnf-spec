@@ -1,0 +1,31 @@
+From 168b799164bc39a9bed6b63bd87c4a550da975b5 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Fri, 30 Sep 2016 07:35:07 +0200
+Subject: [PATCH] repo: add 'rpm' as alias for 'rpm-md' (RhBug:1380580)
+
+libzypp does this as well for some time:
+https://github.com/openSUSE/libzypp/commit/6b22871a0aab134538edcb6e3d0321330817baaa
+
+Reported-by: Kevin Fenzi <kevin@scrye.com>
+References: https://bugzilla.redhat.com/show_bug.cgi?id=1380580
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+---
+ dnf/repo.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dnf/repo.py b/dnf/repo.py
+index 5dcf227..fcc408a 100644
+--- a/dnf/repo.py
++++ b/dnf/repo.py
+@@ -893,7 +893,7 @@ class Repo(dnf.conf.RepoConf):
+     def _valid(self):
+         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
+             return "Repository %s has no mirror or baseurl set." % self.id
+-        supported_types = ['rpm-md', 'repomd', 'rpmmd', 'yum', 'YUM']
++        supported_types = ['rpm-md', 'rpm', 'repomd', 'rpmmd', 'yum', 'YUM']
+         if self.type and self.type not in supported_types:
+             return "Repository '{}' has unsupported type: 'type={}', " \
+                    "skipping.".format(self.id, self.type)
+-- 
+2.10.0
+
