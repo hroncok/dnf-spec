@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc1.2%{?dist}
+Release:        0.rc1.3%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -34,6 +34,8 @@ Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
 # https://github.com/rpm-software-management/dnf/pull/627
 # https://bugzilla.redhat.com/show_bug.cgi?id=1380580
 Patch0001:      0001-repo-add-rpm-as-alias-for-rpm-md-RhBug-1380580.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=1380945
+Patch0002:      0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -325,6 +327,9 @@ popd
 %endif
 
 %changelog
+* Tue Oct 04 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 2.0.0-0.rc1.3
+- Revert group install strict bugfix (RHBZ #1380945)
+
 * Fri Sep 30 2016 Igor Gnatenko <ignatenko@redhat.com> - 2.0.0-0.rc1.2
 - Add alias 'rpm' for 'type=' option (RHBZ #1380580)
 

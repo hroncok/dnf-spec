@@ -1,0 +1,167 @@
+From 49a367b9e06501096020641a3f857925389e6944 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Tue, 4 Oct 2016 08:26:17 +0200
+Subject: [PATCH] Revert "group: treat mandatory pkgs as mandatory if
+ strict=true (RhBug:1292892)"
+
+This reverts commit 91f9ce98dbb630800017f44180d636af395435cd.
+
+Revert note: Add back GroupPersistor._rollback(), it's used in other places.
+References: https://bugzilla.redhat.com/show_bug.cgi?id=1380945
+---
+ dnf/base.py                |  4 +---
+ dnf/cli/commands/group.py  | 10 ++--------
+ tests/repos/main_comps.xml |  8 --------
+ tests/support.py           |  2 +-
+ tests/test_comps.py        |  6 +++---
+ tests/test_groups.py       | 23 +----------------------
+ 6 files changed, 8 insertions(+), 45 deletions(-)
+
+diff --git a/dnf/base.py b/dnf/base.py
+index 5d6218a..2ac1f8e 100644
+--- a/dnf/base.py
++++ b/dnf/base.py
+@@ -1276,14 +1276,12 @@ class Base(object):
+             for it in attr:
+                 if not self.sack.query().filter(name=it):
+                     # a comps item that doesn't refer to anything real
+-                    if (attr == trans.install):
+-                        self._group_persistor._rollback()
+-                        raise dnf.exceptions.MarkingError(it)
+                     continue
+                 sltr = dnf.selector.Selector(self.sack)
+                 sltr.set(name=it)
+                 fn(select=sltr)
+                 cnt += 1
++
+         self._goal.group_members.update(trans.install)
+         self._goal.group_members.update(trans.install_opt)
+         return cnt
+diff --git a/dnf/cli/commands/group.py b/dnf/cli/commands/group.py
+index 49fcf34..4c3dd6d 100644
+--- a/dnf/cli/commands/group.py
++++ b/dnf/cli/commands/group.py
+@@ -396,14 +396,8 @@ class GroupCommand(commands.Command):
+                 types = self.base.conf.group_package_types
+ 
+             self._remark = True
+-            try:
+-                return self.base.env_group_install(extcmds, types,
+-                                                   self.base.conf.strict)
+-            except dnf.exceptions.MarkingError as e:
+-                msg = _('No package %s available.')
+-                logger.info(msg, self.base.output.term.bold(e))
+-                raise dnf.exceptions.PackagesNotAvailableError(
+-                    _("Unable to find a mandatory group package."))
++            return self.base.env_group_install(extcmds, types,
++                                               self.base.conf.strict)
+         if cmd == 'upgrade':
+             return self.base.env_group_upgrade(extcmds)
+         if cmd == 'remove':
+diff --git a/tests/repos/main_comps.xml b/tests/repos/main_comps.xml
+index 3cf8faa..67fc6c7 100644
+--- a/tests/repos/main_comps.xml
++++ b/tests/repos/main_comps.xml
+@@ -39,14 +39,6 @@
+       <packagereq>lotus</packagereq>
+     </packagelist>
+   </group>
+-  <group>
+-    <id>broken-group</id>
+-    <name>Broken Group</name>
+-    <packagelist>
+-      <packagereq type="mandatory">meaning-of-life</packagereq>
+-      <packagereq>lotus</packagereq>
+-    </packagelist>
+-  </group>
+   <category>
+    <id>base-system</id>
+    <display_order>99</display_order>
+diff --git a/tests/support.py b/tests/support.py
+index 06ca4c6..d8aa649 100644
+--- a/tests/support.py
++++ b/tests/support.py
+@@ -84,7 +84,7 @@ SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
+ MAIN_NSOLVABLES = 9
+ UPDATES_NSOLVABLES = 4
+ AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
+-TOTAL_GROUPS = 4
++TOTAL_GROUPS = 3
+ TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
+ 
+ # testing infrastructure
+diff --git a/tests/test_comps.py b/tests/test_comps.py
+index 657ef75..a2ce505 100644
+--- a/tests/test_comps.py
++++ b/tests/test_comps.py
+@@ -100,7 +100,7 @@ class CompsTest(support.TestCase):
+     def test_iteration(self):
+         comps = self.comps
+         self.assertEqual([g.name for g in comps.groups_iter()],
+-                         ['Base', 'Solid Ground', "Pepper's", "Broken Group"])
++                         ['Base', 'Solid Ground', "Pepper's"])
+         self.assertEqual([c.name for c in comps.categories_iter()],
+                          ['Base System'])
+         g = dnf.util.first(comps.groups_iter())
+@@ -108,7 +108,7 @@ class CompsTest(support.TestCase):
+ 
+     def test_group_display_order(self):
+         self.assertEqual([g.name for g in self.comps.groups],
+-                         ["Pepper's", 'Base', 'Solid Ground', 'Broken Group'])
++                         ["Pepper's", 'Base', 'Solid Ground'])
+ 
+     def test_packages(self):
+         comps = self.comps
+@@ -120,7 +120,7 @@ class CompsTest(support.TestCase):
+ 
+     def test_size(self):
+         comps = self.comps
+-        self.assertLength(comps, 6)
++        self.assertLength(comps, 5)
+         self.assertLength(comps.groups, support.TOTAL_GROUPS)
+         self.assertLength(comps.categories, 1)
+         self.assertLength(comps.environments, 1)
+diff --git a/tests/test_groups.py b/tests/test_groups.py
+index 91f501b..0ad50c3 100644
+--- a/tests/test_groups.py
++++ b/tests/test_groups.py
+@@ -68,7 +68,7 @@ class EmptyPersistorTest(support.ResultTestCase):
+         self.assertEmpty(removed)
+ 
+         trans = dnf.comps.TransactionBunch()
+-        trans.install_opt.add('waltz')
++        trans.install.add('waltz')
+         self.assertEqual(self.base._add_comps_trans(trans), 0)
+ 
+ 
+@@ -122,27 +122,6 @@ class PresetPersistorTest(support.ResultTestCase):
+         self.assertEmpty(removed)
+         self.assertTrue(p_grp.installed)
+ 
+-    def test_group_install_broken(self):
+-        prst = self.base._group_persistor
+-        grp = self.base.comps.group_by_pattern('Broken Group')
+-        p_grp = prst.group('broken-group')
+-        self.assertFalse(p_grp.installed)
+-
+-        self.assertRaises(dnf.exceptions.MarkingError,
+-                          self.base.group_install, grp.id,
+-                          ('mandatory', 'default'))
+-        p_grp = prst.group('broken-group')
+-        self.assertFalse(p_grp.installed)
+-
+-        self.assertEqual(self.base.group_install(grp.id,
+-                                                 ('mandatory', 'default'),
+-                                                 strict=False), 1)
+-        inst, removed = self.installed_removed(self.base)
+-        self.assertLength(inst, 1)
+-        self.assertEmpty(removed)
+-        p_grp = prst.group('broken-group')
+-        self.assertTrue(p_grp.installed)
+-
+     def test_group_remove(self):
+         prst = self.base._group_persistor
+         grp_ids = prst.groups_by_pattern('somerset')
+-- 
+2.10.0
+
