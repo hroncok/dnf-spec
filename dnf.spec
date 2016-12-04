@@ -25,12 +25,14 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc2.2%{?dist}
+Release:        0.rc2.3%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
+# https://bugzilla.redhat.com/show_bug.cgi?id=1380945
+Patch666:      0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -177,7 +179,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup
+%autosetup -p1
 mkdir build
 %if %{with python3}
 mkdir build-py3
@@ -322,6 +324,9 @@ popd
 %endif
 
 %changelog
+* Sun Dec 04 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 2.0.0-0.rc2.3
+- Restore patch for relaxing strict groups
+
 * Fri Dec 02 2016 Martin Hatina <mhatina@redhat.com> 2.0.0-0.rc2.2
 - Restore changelog
 
