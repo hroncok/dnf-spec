@@ -1,4 +1,4 @@
-%global hawkey_version 0.7.0-1
+%global hawkey_version 0.7.0-0.4
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc2.4%{?dist}
+Release:        0.rc2.5%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -324,6 +324,9 @@ popd
 %endif
 
 %changelog
+* Tue Dec 06 2016 Martin Hatina <mhatina@redhat.com> - 2.0.0-0.rc2.5
+- Fix libdnf requirement version
+
 * Tue Dec 06 2016 Martin Hatina <mhatina@redhat.com> - 2.0.0-0.rc2.4
 - Increase requirement of libdnf
 
