@@ -1,4 +1,4 @@
-%global hawkey_version 0.7.0
+%global hawkey_version 0.7.0-1
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
@@ -25,14 +25,14 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc2.3%{?dist}
+Release:        0.rc2.4%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
 # https://bugzilla.redhat.com/show_bug.cgi?id=1380945
-Patch666:      0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
+Patch666:       0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -324,6 +324,9 @@ popd
 %endif
 
 %changelog
+* Tue Dec 06 2016 Martin Hatina <mhatina@redhat.com> - 2.0.0-0.rc2.4
+- Increase requirement of libdnf
+
 * Sun Dec 04 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 2.0.0-0.rc2.3
 - Restore patch for relaxing strict groups
 
