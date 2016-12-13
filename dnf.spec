@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc2.5%{?dist}
+Release:        0.rc2.6%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -33,6 +33,8 @@ URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
 # https://bugzilla.redhat.com/show_bug.cgi?id=1380945
 Patch666:       0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
+# https://github.com/rpm-software-management/dnf/pull/686
+Patch777:       0001-tests-catch-ModuleNotFoundError-as-well.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext

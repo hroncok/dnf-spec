@@ -1,0 +1,31 @@
+From 51a1694d7c5dc2a9276ba21678cf8560d90ecfe5 Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Tue, 13 Dec 2016 14:54:29 +0100
+Subject: [PATCH] tests: catch ModuleNotFoundError as well
+
+From What's New in Python 3.6:
+Import now raises the new exception ModuleNotFoundError (subclass of ImportError)
+when it cannot find a module. Code that currently checks for
+ImportError (in try-except) will still work. (Contributed by Eric Snow in issue 15767.)
+
+Signed-off-by: Igor Gnatenko <ignatenko@redhat.com>
+---
+ tests/test_plugin.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tests/test_plugin.py b/tests/test_plugin.py
+index 23a95c33..88e51719 100644
+--- a/tests/test_plugin.py
++++ b/tests/test_plugin.py
+@@ -93,6 +93,6 @@ class PluginNonExistentTest(tests.support.TestCase):
+         with tests.support.wiretap_logs('dnf', dnf.logging.SUBDEBUG, stream):
+             dnf.plugin._import_modules(package, ('nonexistent.py',))
+ 
+-        end = ('ImportError: No module named \'testpkg\'\n' if dnf.pycomp.PY3
+-               else 'ImportError: No module named testpkg.nonexistent\n')
++        end = ('Error: No module named \'testpkg\'\n' if dnf.pycomp.PY3
++               else 'Error: No module named testpkg.nonexistent\n')
+         self.assertTracebackIn(end, stream.getvalue())
+-- 
+2.11.0
+
