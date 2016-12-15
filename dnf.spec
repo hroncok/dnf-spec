@@ -1,4 +1,4 @@
-%global hawkey_version 0.7.0-0.4
+%global hawkey_version 0.7.0-0.1305
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        0.rc2.6%{?dist}
+Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -33,8 +33,6 @@ URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
 # https://bugzilla.redhat.com/show_bug.cgi?id=1380945
 Patch666:       0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
-# https://github.com/rpm-software-management/dnf/pull/686
-Patch777:       0001-tests-catch-ModuleNotFoundError-as-well.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -116,7 +114,6 @@ BuildRequires:  python2-pygpgme
 %endif
 BuildRequires:  pyliblzma
 BuildRequires:  rpm-python >= %{rpm_version}
-Recommends:     bash-completion
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
@@ -151,7 +148,6 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-pygpgme
 BuildRequires:  rpm-python3 >= %{rpm_version}
-Recommends:     bash-completion
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python3-hawkey >= %{hawkey_version}
@@ -249,13 +245,19 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %post automatic
-%systemd_post dnf-automatic.timer
+%systemd_post dnf-automatic-notifyonly.timer
+%systemd_post dnf-automatic-download.timer
+%systemd_post dnf-automatic-install.timer
 
 %preun automatic
-%systemd_preun dnf-automatic.timer
+%systemd_preun dnf-automatic-notifyonly.timer
+%systemd_preun dnf-automatic-download.timer
+%systemd_preun dnf-automatic-install.timer
 
 %postun automatic
-%systemd_postun_with_restart dnf-automatic.timer
+%systemd_postun_with_restart dnf-automatic-notifyonly.timer
+%systemd_postun_with_restart dnf-automatic-download.timer
+%systemd_postun_with_restart dnf-automatic-install.timer
 
 %files -f %{name}.lang
 %{_bindir}/%{name}
@@ -317,8 +319,12 @@ popd
 %{_bindir}/%{name}-automatic
 %config(noreplace) %{confdir}/automatic.conf
 %{_mandir}/man8/%{name}.automatic.8.gz
-%{_unitdir}/%{name}-automatic.service
-%{_unitdir}/%{name}-automatic.timer
+%{_unitdir}/%{name}-automatic-notifyonly.service
+%{_unitdir}/%{name}-automatic-notifyonly.timer
+%{_unitdir}/%{name}-automatic-download.service
+%{_unitdir}/%{name}-automatic-download.timer
+%{_unitdir}/%{name}-automatic-install.service
+%{_unitdir}/%{name}-automatic-install.timer
 %if %{with python3}
 %{python3_sitelib}/%{name}/automatic/
 %else
@@ -326,6 +332,27 @@ popd
 %endif
 
 %changelog
+* Wed Dec 14 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-1
+- tests: catch ModuleNotFoundError as well (Igor Gnatenko)
+- Switch out automatic service for automatic-download and automatic-install
+  (Pat Riehecky)
+- Make upgrade-to alias for upgrade (RhBug:1327999) (Jaroslav Mracek)
+- skip appending an empty option (RhBug: 1400081) (Michael Mraka)
+- Add description of nevra foems for commands and autoremove args (Jaroslav
+  Mracek)
+- Add support of arguments nevra forms for autoremove command (Jaroslav Mracek)
+- Add nevra forms for remove command (Jaroslav Mracek)
+- Add nevra forms for install command (Jaroslav Mracek)
+- add bin/yum into .gitignore (Michal Luscon)
+- clean: acquire all locks before cleaning (RhBug:1293782) (Michal Luscon)
+- Change hawkey version requirement (Jaroslav Mracek)
+- Add information for translators (RhBug:1386078) (Jaroslav Mracek)
+- Change info to warning for clean repoquery output (RhBug:1358245) (Jaroslav
+  Mracek)
+- Add description of pkg flag for Query (RhBug:1243393) (Jaroslav Mracek)
+- Add minor changes in documentation (Jaroslav Mracek)
+- Do not always overwrite the name with the repo ID (Neal Gompa)
+
 * Tue Dec 06 2016 Martin Hatina <mhatina@redhat.com> - 2.0.0-0.rc2.5
 - Fix libdnf requirement version
 
