@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -332,6 +332,9 @@ popd
 %endif
 
 %changelog
+* Thu Dec 15 2016 mluscon <mluscon@redhat.com> - 2.0.0-2
+- rebuild py36
+
 * Wed Dec 14 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-1
 - tests: catch ModuleNotFoundError as well (Igor Gnatenko)
 - Switch out automatic service for automatic-download and automatic-install
