@@ -31,8 +31,6 @@ Summary:        Package manager forked from Yum, using libsolv as a dependency r
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 Source0:        %{url}/archive/%{name}-%{version}/%{name}-%{version}.tar.gz
-# https://bugzilla.redhat.com/show_bug.cgi?id=1380945
-Patch666:       0001-Revert-group-treat-mandatory-pkgs-as-mandatory-if-st.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
