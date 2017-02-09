@@ -429,9 +429,6 @@ popd
 - shell: implement basic logic (Michal Luscon)
 - shell: register new cmd (Michal Luscon)
 
-* Thu Dec 15 2016 mluscon <mluscon@redhat.com> - 2.0.0-2
-- rebuild py36
-
 * Wed Dec 14 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-1
 - tests: catch ModuleNotFoundError as well (Igor Gnatenko)
 - Switch out automatic service for automatic-download and automatic-install
@@ -453,30 +450,8 @@ popd
 - Add minor changes in documentation (Jaroslav Mracek)
 - Do not always overwrite the name with the repo ID (Neal Gompa)
 
-* Tue Dec 06 2016 Martin Hatina <mhatina@redhat.com> - 2.0.0-0.rc2.5
-- Fix libdnf requirement version
-
-* Tue Dec 06 2016 Martin Hatina <mhatina@redhat.com> - 2.0.0-0.rc2.4
-- Increase requirement of libdnf
-
-* Sun Dec 04 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 2.0.0-0.rc2.3
-- Restore patch for relaxing strict groups
-
-* Fri Dec 02 2016 Martin Hatina <mhatina@redhat.com> 2.0.0-0.rc2.2
-- Restore changelog
-
 * Fri Dec 02 2016 Martin Hatina <mhatina@redhat.com> 2.0.0-0.rc2.1
 - See http://dnf.readthedocs.io/en/latest/release_notes.html
-
-* Thu Oct 06 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 2.0.0-0.rc1.4
-- Fix crash in repoquery
-- Trim changelog
-
-* Tue Oct 04 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com> - 2.0.0-0.rc1.3
-- Revert group install strict bugfix (RHBZ #1380945)
-
-* Fri Sep 30 2016 Igor Gnatenko <ignatenko@redhat.com> - 2.0.0-0.rc1.2
-- Add alias 'rpm' for 'type=' option (RHBZ #1380580)
 
 * Thu Sep 29 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-0.rc1.1
 - See http://dnf.readthedocs.io/en/latest/release_notes.html
