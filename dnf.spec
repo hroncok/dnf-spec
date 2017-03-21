@@ -1,4 +1,4 @@
-%global hawkey_version 0.7.1
+%global hawkey_version 0.8.0
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
@@ -24,7 +24,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.1.0
+Version:        2.1.1
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -111,11 +111,8 @@ BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
-%if 0%{?rhel} && 0%{?rhel} <= 7
-BuildRequires:  pygpgme
-%else
-BuildRequires:  python2-pygpgme
-%endif
+BuildRequires:  python2-gpg
+Requires:       python2-gpg
 BuildRequires:  pyliblzma
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       pyliblzma
@@ -125,11 +122,6 @@ Requires:       python-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
-%if 0%{?rhel} && 0%{?rhel} <= 7
-Requires:       pygpgme
-%else
-Requires:       python2-pygpgme
-%endif
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python >= %{rpm_version}
 # dnf-langpacks package is retired in F25
@@ -150,7 +142,8 @@ BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
-BuildRequires:  python3-pygpgme
+BuildRequires:  python3-gpg
+Requires:       python3-gpg
 BuildRequires:  rpm-python3 >= %{rpm_version}
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
@@ -158,7 +151,6 @@ Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
-Requires:       python3-pygpgme
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python3 >= %{rpm_version}
 # dnf-langpacks package is retired in F25
@@ -336,6 +328,47 @@ popd
 %endif
 
 %changelog
+* Tue Mar 21 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.1-1
+- bump version to 2.1.1 + update release notes (Jaroslav Mracek)
+- Fix severity info in "updateinfo info" (Jaroslav Mracek)
+- Add help for shell commands (Jaroslav Rohel)
+- shell: no crash if missing args (Jaroslav Rohel)
+- proper check of releasever, when using installroot (RhBug:1417542) (Martin
+  Hatina)
+- Inform about "Cache was expired" with "dnf clean" (RhBug:1401446) (Jaroslav
+  Mracek)
+- crypto: port to the official gpgme bindings (Igor Gnatenko)
+- Fix doc example for `fill_sack` method (Lubomír Sedlář)
+- po: update translations (Igor Gnatenko)
+- Not try to install src package (RhBug:1416699) (Jaroslav Mracek)
+- Add usage for add_new_repo() with repofrompath option (Jaroslav Mracek)
+- Add new API add_new_repo() in RepoDict() (RhBug:1427132) (Jaroslav Mracek)
+- docs: adds documentation for dnf-automatic's Command and CommandEmail
+  emitters. (rhn)
+- docs: fixes typo in section description in automatic (rhn)
+- Adds new emitters for dnf-automatic. (rhn)
+- po: update translations (Igor Gnatenko)
+- Ensure that callback will not kill dnf transaction (Jaroslav Mracek)
+- Ensure that name will be not requested on None (RhBug:1397047) (Jaroslav
+  Mracek)
+- Python 3.6 invalid escape sequence deprecation fix (Ville Skyttä)
+- display severity information in updateinfo (#741) (Michael Mraka)
+- po: update translations (Igor Gnatenko)
+- Add --nodocs option for dnf (RhBug:1379628) (Jaroslav Mracek)
+- Replace passive plugin noroot (Jaroslav Mracek)
+- Fix incorrect formating of string for logger.info (Jaroslav Mracek)
+- Not print help if empty line in script for shell command (Jaroslav Mracek)
+- Run fill_sack after all repos have changed status (Jaroslav Mracek)
+- Remove Hawkey object from repo if rerun of dnf.fill_sack (Jaroslav Mracek)
+- util/on_metered_connection: be more polite to failures (Igor Gnatenko)
+- cosmetic: i18n: rewording of 'Login user' (RhBug:1424939) (Jan Silhan)
+- Fix problem with --whatprovides in repoquery (RhBug:1396992) (Jaroslav
+  Mracek)
+- Add -a and --all option for repoquery (RhBug:1412970) (Jaroslav Mracek)
+- Change camel-case of output of grouplist (Jaroslav Mracek)
+- Minor correction in release notes (Jaroslav Mracek)
+- Minor correction in release notes (Jaroslav Mracek)
+
 * Thu Feb 16 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.0-1
 - bump version to 2.1.0 + update release notes (Jaroslav Mracek)
 - Fix problem with --recent option in repoquery (Jaroslav Mracek)
