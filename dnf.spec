@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.1.1
-Release:        1%{?dist}
+Release:        1.1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -328,6 +328,9 @@ popd
 %endif
 
 %changelog
+* Tue Mar 21 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.1-1.1
+- Exchange tarball of dnf-2.1.1
+
 * Tue Mar 21 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.1-1
 - bump version to 2.1.1 + update release notes (Jaroslav Mracek)
 - Fix severity info in "updateinfo info" (Jaroslav Mracek)
