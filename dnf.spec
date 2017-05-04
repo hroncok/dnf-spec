@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -34,6 +34,7 @@ URL:            https://github.com/rpm-software-management/dnf
 # cd dnf
 # tito build --tgz --tag=dnf-2.0.1-1
 Source0:        %{name}-%{version}.tar.gz
+Patch0001:      0001-Filter-out-src-for-get_best_selector.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -332,6 +333,9 @@ popd
 %endif
 
 %changelog
+* Thu May 04 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.4.0-2
+- Don't choose src packages for installation
+
 * Tue May 02 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.0-1
 - po: Update translations (Igor Gnatenko)
 - po: Update translations (Igor Gnatenko)
