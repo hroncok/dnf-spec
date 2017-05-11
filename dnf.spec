@@ -24,8 +24,8 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.4.0
-Release:        2%{?dist}
+Version:        2.4.1
+Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -34,7 +34,6 @@ URL:            https://github.com/rpm-software-management/dnf
 # cd dnf
 # tito build --tgz --tag=dnf-2.0.1-1
 Source0:        %{name}-%{version}.tar.gz
-Patch0001:      0001-Filter-out-src-for-get_best_selector.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -333,6 +332,22 @@ popd
 %endif
 
 %changelog
+* Thu May 11 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.1-1
+- bump version to 2.4.1 + update release notes (Jaroslav Mracek)
+- goal: do not mark weak dependencies as userinstalled (Igor Gnatenko)
+- fix typo in supplements (RhBug:1446756) (Igor Gnatenko)
+- Describe present behavior of installonly_limit conf option (Jaroslav Mracek)
+- Reset all transaction for groups if Base.reset() (RhBug:1446432) (Jaroslav
+  Mracek)
+- Explain how add negative num for --latest-limit (RhBug:1446641) (Jaroslav
+  Mracek)
+- trivial: don't duplicate option names (Igor Gnatenko)
+- Add support for --userinstalled for repoquery command (RhBug:1278124)
+  (Jaroslav Rohel)
+- Fix header of search result sections (RhBug:1301868) (Jaroslav Rohel)
+- Filter out src for get_best_selector (Jaroslav Mracek)
+- Add minor changes in formating of documentation (Jaroslav Mracek)
+
 * Thu May 04 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.4.0-2
 - Don't choose src packages for installation
 
