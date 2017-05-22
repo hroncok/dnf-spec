@@ -1,4 +1,4 @@
-%global hawkey_version 0.8.0
+%global hawkey_version 0.9.0
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
@@ -24,7 +24,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.4.1
+Version:        2.5.0
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -225,13 +225,12 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 rm -vf %{buildroot}%{_bindir}/yum-*
 
 %check
-# Something is totally broken with enableplugin on non-x86_64 arches
 pushd build
-  ctest -VV || :
+  ctest -VV
 popd
 %if %{with python3}
 pushd build-py3
-  ctest -VV || :
+  ctest -VV
 popd
 %endif
 
@@ -332,6 +331,26 @@ popd
 %endif
 
 %changelog
+* Mon May 22 2017 Jaroslav Mracek <jmracek@redhat.com> 2.5.0-1
+- Update release notes (Jaroslav Mracek)
+- Change documentation for history --userinstalled (RhBug:1370062) (Jaroslav
+  Mracek)
+- Change example to install plugin using versionlock (Jaroslav Mracek)
+- Remove unused method Goal.best_run_diff() (Jaroslav Mracek)
+- Change recommendations if some problems appear (RhBug:1293067) (Jaroslav
+  Mracek)
+- Report problems for goals with optional=True (Jaroslav Mracek)
+- Format resolve problem messages in method in dnf.util (Jaroslav Mracek)
+- Enhance reports about broken dep (RhBug:1398040)(RhBug:1393814) (Jaroslav
+  Mracek)
+- search: do not generate error if not match anything (RhBug:1342157) (Jaroslav
+  Rohel)
+- Check if any plugin is removed in transaction (RhBug:1379906) (Jaroslav
+  Mracek)
+- Show progress for DRPM (RhBug:1198975) (Jaroslav Mracek)
+- Fix disabledplugin option (Iavael)
+- [history]: fixed info command merged output (Eduard Čuba)
+
 * Thu May 11 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.1-1
 - bump version to 2.4.1 + update release notes (Jaroslav Mracek)
 - goal: do not mark weak dependencies as userinstalled (Igor Gnatenko)
