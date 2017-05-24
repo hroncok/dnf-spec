@@ -1,0 +1,104 @@
+From 425da31359d46e170c7449592a67563662e53a7f Mon Sep 17 00:00:00 2001
+From: Igor Gnatenko <ignatenko@redhat.com>
+Date: Wed, 24 May 2017 15:14:40 +0200
+Subject: [PATCH] Revert "Show progress for DRPM (RhBug:1198975)"
+
+This reverts commit 9288d90d7fa6d0c168ec020e6a32d01185504220.
+---
+ dnf/base.py          |  4 +---
+ dnf/callback.py      |  2 +-
+ dnf/cli/progress.py  | 14 +++-----------
+ doc/api_callback.rst |  6 ++----
+ 4 files changed, 7 insertions(+), 19 deletions(-)
+
+diff --git a/dnf/base.py b/dnf/base.py
+index 811fdee8..ca5a1b08 100644
+--- a/dnf/base.py
++++ b/dnf/base.py
+@@ -1008,9 +1008,7 @@ class Base(object):
+ 
+             beg_download = time.time()
+             est_remote_size = sum(pload.download_size for pload in payloads)
+-            total_drpm = len(
+-                [payload for payload in payloads if isinstance(payload, dnf.drpm.DeltaPayload)])
+-            progress.start(len(payloads), est_remote_size, total_drpms=total_drpm)
++            progress.start(len(payloads), est_remote_size)
+             errors = dnf.repo._download_payloads(payloads, drpm)
+ 
+             if errors._irrecoverable:
+diff --git a/dnf/callback.py b/dnf/callback.py
+index e575fdb5..ea31aa61 100644
+--- a/dnf/callback.py
++++ b/dnf/callback.py
+@@ -88,7 +88,7 @@ class DownloadProgress(object):
+ 
+         pass
+ 
+-    def start(self, total_files, total_size, total_drpms=0):
++    def start(self, total_files, total_size):
+         """Start new progress metering. :api
+ 
+         `total_files` the number of files that will be downloaded,
+diff --git a/dnf/cli/progress.py b/dnf/cli/progress.py
+index 2db6b232..8a91e429 100644
+--- a/dnf/cli/progress.py
++++ b/dnf/cli/progress.py
+@@ -51,11 +51,9 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
+     def message(self, msg):
+         dnf.util._terminal_messenger('write_flush', msg, self.fo)
+ 
+-    def start(self, total_files, total_size, total_drpms=0):
++    def start(self, total_files, total_size):
+         self.total_files = total_files
+         self.total_size = total_size
+-        self.total_drpm = total_drpms
+-        self.done_drpm = 0
+ 
+         # download state
+         self.done_files = 0
+@@ -147,10 +145,8 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
+         size = int(payload.download_size)
+ 
+         # update state
+-        if status == dnf.callback.STATUS_MIRROR:
++        if status in (dnf.callback.STATUS_MIRROR, dnf.callback.STATUS_DRPM):
+             pass
+-        elif status == dnf.callback.STATUS_DRPM:
+-            self.done_drpm += 1
+         elif text in self.state:
+             start, done = self.state.pop(text)
+             self.active.remove(text)
+@@ -163,11 +159,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
+ 
+         if status:
+             # the error message, no trimming
+-            if status is dnf.callback.STATUS_DRPM and self.total_drpm > 1:
+-                msg = '[%s %d/%d] %s: ' % (self.STATUS_2_STR[status], self.done_drpm,
+-                                           self.total_drpm, text)
+-            else:
+-                msg = '[%s] %s: ' % (self.STATUS_2_STR[status], text)
++            msg = '[%s] %s: ' % (self.STATUS_2_STR[status], text)
+             left = _term_width() - len(msg) - 1
+             msg = '%s%-*s\n' % (msg, left, err_msg)
+         else:
+diff --git a/doc/api_callback.rst b/doc/api_callback.rst
+index 5242e682..8fc44254 100644
+--- a/doc/api_callback.rst
++++ b/doc/api_callback.rst
+@@ -58,11 +58,9 @@
+ 
+     Report ongoing progress on the given `payload`. `done` is the number of bytes already downloaded from `payload`.
+ 
+-  .. method:: start(total_files, total_size, total_drpms=0)
++  .. method:: start(total_files, total_size)
+ 
+-    Report start of a download batch. `total_files` is the total number of payloads in the batch.
+-    `total_size` is the total number of bytes to be downloaded. `total_drpms` is the total number
+-    of drpms payloads in the batch.
++    Report start of a download batch. `total_files` is the total number of payloads in the batch. `total_size` is the total number of bytes to be downloaded.
+ 
+ .. class:: TransactionProgress
+ 
+-- 
+2.13.0
+

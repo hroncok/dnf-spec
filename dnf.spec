@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.5.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -34,6 +34,8 @@ URL:            https://github.com/rpm-software-management/dnf
 # cd dnf
 # tito build --tgz --tag=dnf-2.0.1-1
 Source0:        %{name}-%{version}.tar.gz
+# Breaks API
+Patch0:         0001-Revert-Show-progress-for-DRPM-RhBug-1198975.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -331,6 +333,9 @@ popd
 %endif
 
 %changelog
+* Wed May 24 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.5.0-2
+- Revert patch which breaks API
+
 * Mon May 22 2017 Jaroslav Mracek <jmracek@redhat.com> 2.5.0-1
 - Update release notes (Jaroslav Mracek)
 - Change documentation for history --userinstalled (RhBug:1370062) (Jaroslav
