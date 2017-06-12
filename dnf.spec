@@ -24,8 +24,8 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.5.0
-Release:        2%{?dist}
+Version:        2.5.1
+Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -34,8 +34,6 @@ URL:            https://github.com/rpm-software-management/dnf
 # cd dnf
 # tito build --tgz --tag=dnf-2.0.1-1
 Source0:        %{name}-%{version}.tar.gz
-# Breaks API
-Patch0:         0001-Revert-Show-progress-for-DRPM-RhBug-1198975.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -333,6 +331,40 @@ popd
 %endif
 
 %changelog
+* Mon Jun 12 2017 Jaroslav Mracek <jmracek@redhat.com> 2.5.1-1
+- bump version to 2.5.1 + update release notes (Jaroslav Mracek)
+- Fix: dnf update --refresh fails for repo_gpgcheck=1 (RhBug:1456419) (Daniel
+  Mach)
+- Don't try to cut datetime message (Jaroslav Rohel)
+- Use localized datetime format (RhBug:1445021) (Jaroslav Rohel)
+- Work with locale date (Jaroslav Rohel)
+- Use ISO 8601 time format in logfile (Jaroslav Rohel)
+- Add unitest to prevent callbacks breakage (Jaroslav Mracek)
+- Provide compatibility for tools that do not use total_drpms (Jaroslav Mracek)
+- Requires strict usage of repoquery --recursive (Jaroslav Mracek)
+- Fix output for --resolve with --installed for repoquery (Jaroslav Mracek)
+- Remove unnecessary inheritance of yum conf options (Martin Hatina)
+- Remove alwaysprompt option support (RhBug:1400714) (Jaroslav Rohel)
+- Allow to install groups with multilib_policy=all (RhBug:1250702) (Jaroslav
+  Mracek)
+- Redesign Base.install() to provide alternatives (Jaroslav Mracek)
+- Report excludes includes into logger.debug (RhBug:1381988) (Jaroslav Mracek)
+- Provide new API to parse string to NEVRA () (Jaroslav Mracek)
+- Add more repoquery querytags (Jaroslav Rohel)
+- Not hide tracebacks (Jaroslav Mracek)
+- Solve error handling for get attr in yumdb (RhBug:1397848) (Jaroslav Mracek)
+- Provide a better error if throttle to low (RhBug:1321407) (Jaroslav Mracek)
+- Change timeout to 30s (RhBug:1291867) (Jaroslav Mracek)
+- Add pre_transaction hook for plugins (Jaroslav Rohel)
+- Not download metadata if "dnf history [info|list|userinstalled]" (Jaroslav
+  Mracek)
+- Not download metadata if "dnf repo-pkgs <repo> list --installed" (Jaroslav
+  Mracek)
+- Not download metadata if "dnf list --installed" (RhBug:1372895) (Jaroslav
+  Mracek)
+- Format pkg str for repoquery --tree due to -qf (RhBug:1444751) (Jaroslav
+  Mracek)
+
 * Wed May 24 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.5.0-2
 - Revert patch which breaks API
 
