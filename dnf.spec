@@ -1,8 +1,8 @@
-%global hawkey_version 0.9.0
+%global hawkey_version 0.9.3
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
-%global min_plugins_core 0.1.13
+%global min_plugins_core 2.1.3
 %global dnf_langpacks_ver 0.15.1-6
 
 %global confdir %{_sysconfdir}/%{name}
@@ -24,7 +24,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.5.1
+Version:        2.6.2
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -32,13 +32,13 @@ License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 # git clone https://github.com/rpm-software-management/dnf
 # cd dnf
-# tito build --tgz --tag=dnf-2.0.1-1
+# tito build --tgz --tag=dnf-2.5.1-1
 Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
-BuildRequires:  python-bugzilla
-BuildRequires:  python-sphinx
+# Documentation
+BuildRequires:  %{_bindir}/sphinx-build
 BuildRequires:  systemd
 BuildRequires:  bash-completion
 %if %{with python3}
@@ -106,7 +106,7 @@ As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
-BuildRequires:  python-hawkey >= %{hawkey_version}
+BuildRequires:  python2-hawkey >= %{hawkey_version}
 BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
@@ -118,7 +118,7 @@ BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
-Requires:       python-hawkey >= %{hawkey_version}
+Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
@@ -331,6 +331,57 @@ popd
 %endif
 
 %changelog
+* Mon Jul 24 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.2-1
+- Remove autodeglob optimization (Jaroslav Rohel)
+- Integrate --destdir with --destdir from download plugin (Ondřej Sojka)
+- Add CLI option --destdir (RhBug:1279001) (Ondřej Sojka)
+- Add myself to the AUTHORS file (Nathaniel McCallum)
+- Add the --forcearch CLI flag (Nathaniel McCallum)
+- Add 'ignorearch' option (Nathaniel McCallum)
+- Provide an API for setting 'arch' and 'basearch' (Nathaniel McCallum)
+- Add nevra forms for repoquery command (Jaroslav Rohel)
+- Fix UnicodeDecodeError during checkSig() on non UTF-8 locale (RhBug:1397848)
+  (Jaroslav Rohel)
+- Add dnf option --noautoremove (RhBug:1361424) (Jaroslav Mracek)
+- Add group argument for mark command (Jaroslav Mracek)
+- Report problems for each pkg during gpgcheck (RhBug:1387925) (Jaroslav
+  Mracek)
+- fix minor spelling mistakes (René Genz)
+- Print warning when wrong delimiter in cache (RhBug:1332099) (Vítek Hoch)
+- Fix the loading of config for dnf-automatic command_email (RhBug:1470116)
+  (Jaroslav Rohel)
+- Enable download progress bar if redirected output (RhBug:1161950) (Jaroslav
+  Mracek)
+- Support short abbrevations of commands (RhBug:1320254) (Vítek Hoch)
+- Remove unused variables kwargs (Jaroslav Mracek)
+- Not reinstall packages if install from repository-pkgs used (Jaroslav Mracek)
+- bump dnf version to 2.6.0 (Igor Gnatenko)
+- spec: use python2- prefix for hawkey (Igor Gnatenko)
+- spec: use sphinx-build binary rather than package name (Igor Gnatenko)
+- spec: python-bugzilla is not needed for building (Igor Gnatenko)
+- spec: fix instructions about generating tarball (Igor Gnatenko)
+- po: Update translations (Igor Gnatenko)
+- Add an example of installation without weak-deps  (RhBug:1424723) (Jaroslav
+  Mracek)
+- Add detection if mirrorlist is used for metalink (Jaroslav Mracek)
+- Rename variable (Jaroslav Mracek)
+- Add --groupmember option to repoquery (RhBug:1462486) (Jaroslav Mracek)
+- Check checksum for local repositories (RhBug:1314405) (Jaroslav Mracek)
+- Spelling fixes (Ville Skyttä)
+- repoquery --obsoletes prints obsoletes (RhBug:1457368) (Matěj Cepl)
+- Provide pkg name hint for icase (RhBug:1339280) (RhBug:1138978) (Jaroslav
+  Mracek)
+- Return only latest pkgs for "dnf list upgrades" (RhBug:1423472) (Jaroslav
+  Mracek)
+- cleanup code not executed in case of exception (Marek Blaha)
+- Allow to modify message for user confirmation (Jaroslav Mracek)
+- Add autocheck_running_kernel config option (Štěpán Smetana)
+- Inform about skipped packages for group install (RhBug:1427365) (Jaroslav
+  Mracek)
+- Remove group remove unneeded pkgs (RhBug:1398871) (RhBug:1432312) (Jaroslav
+  Mracek)
+- po: update translations (Igor Gnatenko)
+
 * Mon Jun 12 2017 Jaroslav Mracek <jmracek@redhat.com> 2.5.1-1
 - bump version to 2.5.1 + update release notes (Jaroslav Mracek)
 - Fix: dnf update --refresh fails for repo_gpgcheck=1 (RhBug:1456419) (Daniel
