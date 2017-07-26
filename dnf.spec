@@ -25,7 +25,7 @@
 
 Name:           dnf
 Version:        2.6.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -331,6 +331,9 @@ popd
 %endif
 
 %changelog
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.6.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Mon Jul 24 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.2-1
 - Remove autodeglob optimization (Jaroslav Rohel)
 - Integrate --destdir with --destdir from download plugin (Ondřej Sojka)
