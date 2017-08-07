@@ -24,8 +24,8 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.6.2
-Release:        3%{?dist}
+Version:        2.6.3
+Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -34,8 +34,6 @@ URL:            https://github.com/rpm-software-management/dnf
 # cd dnf
 # tito build --tgz --tag=dnf-2.5.1-1
 Source0:        %{name}-%{version}.tar.gz
-# https://bugzilla.redhat.com/show_bug.cgi?id=1476464
-Patch0001:      0001-Fix-problems-with-downloaddir-options-RhBug-1476464.patch
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -48,9 +46,13 @@ Requires:       python3-%{name} = %{version}-%{release}
 %else
 Requires:       python2-%{name} = %{version}-%{release}
 %endif
-# TODO: use rich deps once it is allowed in Fedora
+%if 0%{?rhel} && 0%{?rhel} <= 7
+Requires:       python-dbus
+%else
+# TODO: use rich deps once it is allowed
 #Recommends:     (python%{?with_python3:3}-dbus if NetworkManager)
 Recommends:     python%{?with_python3:3}-dbus
+%endif
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
@@ -96,6 +98,15 @@ Obsoletes:      dnf-langpacks-conf < %{dnf_langpacks_ver}
 %description conf
 Configuration files for DNF.
 
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%package -n yum4
+Requires:       %{name} = %{version}-%{release}
+Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum4 redirecting to DNF
+
+%description -n yum4
+As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
+%else
 %package yum
 Conflicts:      yum < 3.4.3-505
 Requires:       %{name} = %{version}-%{release}
@@ -103,6 +114,7 @@ Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum redirect
 
 %description yum
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+%endif
 
 %package -n python2-%{name}
 Summary:        Python 2 interface to DNF
@@ -124,7 +136,11 @@ Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
+%else
+Recommends:     rpm-plugin-systemd-inhibit
+%endif
 Requires:       rpm-python >= %{rpm_version}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
@@ -153,7 +169,11 @@ Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
+%else
+Recommends:     rpm-plugin-systemd-inhibit
+%endif
 Requires:       rpm-python3 >= %{rpm_version}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
@@ -214,17 +234,22 @@ mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 %if %{with python3}
-%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/{dnf-3,yum-3}}
+%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/dnf-3}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
-mv %{buildroot}%{_bindir}/yum-3 %{buildroot}%{_bindir}/yum
+ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
 %else
 ln -sr %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
-mv %{buildroot}%{_bindir}/yum-2 %{buildroot}%{_bindir}/yum
+%if 0%{?rhel} && 0%{?rhel} <= 7
+ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum4
+ln -sr  %{buildroot}%{_mandir}/man8/dnf.8.gz %{buildroot}%{_mandir}/man8/yum4.8.gz
+rm -f %{buildroot}%{_mandir}/man8/yum.8.gz
+%else
+ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
+%endif
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
-rm -vf %{buildroot}%{_bindir}/yum-*
 
 %check
 pushd build
@@ -293,13 +318,21 @@ popd
 %ghost %{_sharedstatedir}/%{name}/groups.json
 %ghost %{_sharedstatedir}/%{name}/yumdb
 %ghost %{_sharedstatedir}/%{name}/history
-%{_mandir}/man5/%{name}.conf.5.gz
+%{_mandir}/man5/%{name}.conf.5*
 %{_tmpfilesdir}/%{name}.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%files -n yum4
+%{_bindir}/yum4
+%{_mandir}/man8/yum4.8*
+%exclude %{_mandir}/man8/yum.8*
+
+%else
 %files yum
 %{_bindir}/yum
-%{_mandir}/man8/yum.8.gz
+%{_mandir}/man8/yum.8*
+%endif
 
 %files -n python2-%{name}
 %{_bindir}/%{name}-2
@@ -319,7 +352,7 @@ popd
 %files automatic
 %{_bindir}/%{name}-automatic
 %config(noreplace) %{confdir}/automatic.conf
-%{_mandir}/man8/%{name}.automatic.8.gz
+%{_mandir}/man8/%{name}.automatic.8*
 %{_unitdir}/%{name}-automatic-notifyonly.service
 %{_unitdir}/%{name}-automatic-notifyonly.timer
 %{_unitdir}/%{name}-automatic-download.service
@@ -333,6 +366,42 @@ popd
 %endif
 
 %changelog
+* Mon Aug 07 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.3-1
+- Fix problem with dnf.Package().remote_location() (RhBug:1476215) (Jaroslav
+  Mracek)
+- Change behavior of -C according to documentation (RhBug:1473964) (Jaroslav
+  Mracek)
+- It should prevent to ask attribute of None (RhBug:1359482) (Jaroslav Mracek)
+- Solve a problems with --arch options (RhBug:1476834) (Jaroslav Mracek)
+- Use security plugin code for dnf-automatic (Jaroslav Mracek)
+- Fix unicode error for python2 (Jaroslav Mracek)
+- Inform about packages installed for group (Jaroslav Mracek)
+- Provide info if pkg is removed due to dependency (RhBug:1244755) (Jaroslav
+  Mracek)
+- Unify format of %%{_mandir} paths in dnf.spec (Jaroslav Mracek)
+- Remove test_yumlayer.py as unneeded test (Jaroslav Mracek)
+- Provide yum4 package for rhel7 build (Jaroslav Mracek)
+- Make yum compatible layer very minimal (RhBug:1476748) (Jaroslav Mracek)
+- Remove metadata_expire from yum compatible layer (Jaroslav Mracek)
+- Remove keepcache from yum compatibility layer (Jaroslav Mracek)
+- Remove options from yum conf (Jaroslav Mracek)
+- Remove unused functionality from  yum compatible layer (Jaroslav Mracek)
+- Add deplist command for dnf (Jaroslav Mracek)
+- Fix problems with --downloaddir options (RhBug:1476464) (Jaroslav Mracek)
+- Move description of --forcearch into proper place (Jaroslav Mracek)
+- Provide description of --downloaddir option (Jaroslav Mracek)
+- Fix if in spec file (Jaroslav Mracek)
+- Add description of "test" tsflags (Jaroslav Mracek)
+- Enable import gpg_keys with tsflag test (RhBug:1464192) (Jaroslav Mracek)
+- Keep old reason when undoing erase (RhBug:1463107) (Eduard Čuba)
+- spec: eliminate other weak dependencies for el<=7 (Igor Gnatenko)
+- spec: do not strongly require inhibit plugin (Igor Gnatenko)
+- Inform that packages are only downloaded (RhBug:1426196) (Jaroslav Mracek)
+- Move releasever check after the etc/dnf/vars substitutions. (Alexander
+  Kanavin)
+- Provide substitution for Repodict.add_new_repo() (RhBug:1457507) (Jaroslav
+  Mracek)
+
 * Tue Aug 01 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.6.2-3
 - Unblock libguestfs builds due to regression here
 
