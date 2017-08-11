@@ -9,6 +9,10 @@
 
 %global pluginconfpath %{confdir}/plugins
 
+## What Python subpackages to build
+# Note that --without python2 will fail to build manpages
+# so it's currently unsupported
+# Also double check the results if you build with different combos
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %bcond_without python2
 %bcond_with python3
